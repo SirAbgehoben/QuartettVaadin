@@ -11,7 +11,9 @@ import com.vaadin.flow.server.VaadinSession;
 public class QuartettView extends VerticalLayout implements BeforeEnterObserver {
 
     public QuartettView() {
-        // setup UI components only; no navigation statements here
+        VaadinSession session = VaadinSession.getCurrent();
+        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
+
         Span helloSpan = new Span("Hello World!");
         add(helloSpan);
     }
