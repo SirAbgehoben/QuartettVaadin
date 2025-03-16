@@ -10,13 +10,13 @@ public class QuartettSession {
     public static ArrayList<QuartettSession> AktiveSessions = new ArrayList<QuartettSession>();
     public static int QuartettSessionIdCounter = 0; //using a static means that it is shared between all instances of the class
 
-    private HashMap<VaadinSession, String> usersInSession = new HashMap();
+    private HashMap<VaadinSession, String> usersInSession = new HashMap(); //session, name
 
     private int id;
     private ArrayList<Integer> DeckPlayerOne = new ArrayList<Integer>();
     private ArrayList<Integer> DeckPlayerTwo = new ArrayList<Integer>();
-    private Player playerOne;
-    private Player playerTwo;
+    public Player playerOne;
+    public Player playerTwo;
 
     public QuartettSession(int id, ArrayList<ArrayList<Integer>> decks) {
         this.id = id;
@@ -28,9 +28,29 @@ public class QuartettSession {
         playerOne = new Player(DeckPlayerOne);
         playerTwo = new Player(DeckPlayerTwo);
     }
+    public void InitializePlayers() {
+        ArrayList<String> userNamesInSession = new ArrayList<>();
+        ArrayList<VaadinSession> userSessionsInSession = new ArrayList<>();
+        usersInSession.forEach((session, name) -> {
+            userNamesInSession.add(name);
+        });
+        usersInSession.forEach((session, name) -> {
+            userSessionsInSession.add(session);
+        });
+        playerOne.setName(userNamesInSession.get(0));
+        playerOne.setSessionId(userSessionsInSession.get(0));
+        playerTwo.setName(userNamesInSession.get(1));
+        playerTwo.setSessionId(userSessionsInSession.get(1));
+        System.out.println("Initialized players: " + playerOne.getSessionId() + " and " + playerTwo.getSessionId());
+
+        System.out.println("Initialized players: " + playerOne.getName() + " and " + playerTwo.getName());
+    }
 
     public void endSession() {
         AktiveSessions.remove(this);
+    }
+    public int getId() {
+        return id;
     }
 
     public void addPlayer(VaadinSession session, String name) {
@@ -44,11 +64,3 @@ public class QuartettSession {
     }
 
 }
-
-
-
-/*        // Create a new QuartettSession, assigning a new session ID
-        QuartettSession newSession = new QuartettSession();
-        activeSessions.add(newSession); // Add to the list of active sessions*/
-
-//okay, so an object is like a copy of a class, i can access everything in it and set variables independently

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.abgehoben.QuartettVaadin.QuartettSession.QuartettSessionIdCounter;
 
@@ -20,19 +21,56 @@ public class QuartettService {
             quartettSession.addPlayer(session, name);
         });
 
-        // Navigate users in the queue to QuartettView
+        quartettSession.InitializePlayers();
+
         for (VaadinSession session : LoginService.usersInQueue.keySet()) {
-            session.access(() -> UI.getCurrent().navigate("QuartettView"));
+            session.access(() -> {
+                UI ui = LoginService.getUIForSession(session);
+                if (ui != null && ui.isAttached()) {
+                    System.out.println("Navigating to quartett for session: " + session.getSession().getId() + " with UI: " + ui);
+                    ui.navigate(QuartettView.class);
+                } else {
+                    System.out.println("UI is null for session: " + session.getSession().getId());
+                }
+            });
         }
+        LoginService.usersInQueue.clear();
     }
 
     public static void joinGame(VaadinSession session) {
-        //do this later
-        session.access(() -> UI.getCurrent().navigate("QuartettView"));
+        session.access(() -> {
+            UI ui = LoginService.getUIForSession(session);
+            if (ui != null) {
+                System.out.println("Navigating to quartett for session: " + session.getSession().getId() + " with UI: " + ui);
+                ui.navigate("quartett");
+            } else {
+                System.out.println("UI is null for session: " + session.getSession().getId());
+            }
+        });
+    }
+    public static void leaveGame(VaadinSession session) {
+        QuartettSession quartettSession = getQuartettSessionForPlayer(session);
+        quartettSession.removePlayer(session);
+        if (quartettSession.getPlayers().isEmpty()) {
+            endGame(quartettSession);
+        }
     }
 
-    public void endGame(QuartettSession quartettSession) {
+    public static void endGame(QuartettSession quartettSession) {
+        for (VaadinSession session : quartettSession.getPlayers().keySet()) {
+            session.access(() -> {
+                UI ui = LoginService.getUIForSession(session);
+                if (ui != null && ui.isAttached()) {
+                    System.out.println("Navigating to login for session: " + session.getSession().getId() + " with UI: " + ui);
+                    ui.navigate(MainView.class);
+                } else {
+                    System.out.println("UI is null for session: " + session.getSession().getId());
+                }
+            });
+        }
+        quartettSession.endSession();
         quartettSession = null;
+
         //send users to LoginView
     }
 
