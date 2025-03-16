@@ -85,11 +85,9 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         // Image
         Image image = new Image(card.getImagePath(), "Card Image");
-        image.setWidth("280px");
-        image.setHeight("300px");
         image.getStyle().set("display", "block");
         image.getStyle().set("margin-left", "auto");
-        image.getStyle().set("margin-right", "auto");
+image.getStyle().set("margin-right", "auto").setMaxWidth("300px").setMaxHeight("240px");
         PlayerCard.add(image);
 
         return PlayerCard;
