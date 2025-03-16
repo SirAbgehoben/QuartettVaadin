@@ -7,10 +7,10 @@ import java.util.HashMap;
 
 public class QuartettSession {
 
-    public static ArrayList<QuartettSession> AktiveSessions = new ArrayList<QuartettSession>();
+    public static ArrayList<QuartettSession> AktiveSessions = new ArrayList<>();
     public static int QuartettSessionIdCounter = 0; //using a static means that it is shared between all instances of the class
 
-    private HashMap<VaadinSession, String> usersInSession = new HashMap(); //session, name
+    private HashMap<VaadinSession, String> usersInSession = new HashMap<>(); //session, name
 
     private int id;
     private ArrayList<Integer> DeckPlayerOne = new ArrayList<Integer>();

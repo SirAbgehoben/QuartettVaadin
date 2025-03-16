@@ -4,7 +4,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.abgehoben.QuartettVaadin.QuartettSession.QuartettSessionIdCounter;
 
@@ -17,9 +16,7 @@ public class QuartettService {
         ArrayList<ArrayList<Integer>> decks = createCardsDeck();
         QuartettSession quartettSession = new QuartettSession(QuartettSessionIdCounter, decks);
 
-        LoginService.usersInQueue.forEach( (session, name) -> {;
-            quartettSession.addPlayer(session, name);
-        });
+        LoginService.usersInQueue.forEach(quartettSession::addPlayer); //addPlayer(session, name) for each usersInQueue
 
         quartettSession.InitializePlayers();
 
@@ -50,9 +47,15 @@ public class QuartettService {
     }
     public static void leaveGame(VaadinSession session) {
         QuartettSession quartettSession = getQuartettSessionForPlayer(session);
-        quartettSession.removePlayer(session);
+
+        if (quartettSession == null) {
+            return;
+        }
+
         if (quartettSession.getPlayers().isEmpty()) {
             endGame(quartettSession);
+        } else if (quartettSession.getPlayers().containsKey(session)) {
+            quartettSession.removePlayer(session);
         }
     }
 
