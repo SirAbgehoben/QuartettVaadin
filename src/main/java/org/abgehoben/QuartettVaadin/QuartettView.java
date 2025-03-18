@@ -90,29 +90,11 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         PlayerCard.setWidth("300px");
         PlayerCard.setHeight("450px");
 
-        // Player name
-        Span nameLabel = new Span(currentPlayer.getName());
-        nameLabel.getStyle().set("font-weight", "bold");
-        nameLabel.getStyle().set("display", "block");
-        nameLabel.getStyle().set("text-align", "left");
-        nameLabel.getStyle().setPaddingLeft("8px");
-        nameLabel.getStyle().set("color", "white");
-        PlayerCard.add(nameLabel);
+        Div NameAndRole = CreateNameAndRole(currentPlayer, role);
+        PlayerCard.add(NameAndRole);
 
-        Span PlayerRole = new Span(role);
-        PlayerRole.getStyle().set("font-weight", "bold");
-        PlayerRole.getStyle().set("display", "block");
-        PlayerRole.getStyle().set("text-align", "center");
-        PlayerRole.getStyle().set("color", "white");
-        PlayerCard.add(PlayerRole);
-
-        // Image
-        Image image = new Image(card.getImagePath(), "Card Image");
-        image.getStyle().set("display", "block");
-        image.getStyle().set("margin-left", "auto");
-        image.getStyle().set("margin-right", "auto").setWidth("300px").setHeight("200px").set("object-fit", "cover");
-        PlayerCard.add(image);
-
+        Div CardImage = CreateQuartettCardImage(card);
+        PlayerCard.add(CardImage);
 
 
         VerticalLayout attributesLayout = new VerticalLayout();
@@ -134,8 +116,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
                 attributeButton.setDisableOnClick(true);
                 attributesLayout.add(attributeButton);
 
-                attributeButton.addClickListener(event -> {
 
+                attributeButton.addClickListener(event -> {
                     attributesLayout.getChildren().forEach(component -> {
                         if (component instanceof Button) {
                             ((Button) component).setEnabled(false);
@@ -169,6 +151,40 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         return PlayerCard;
     }
+
+    public Div CreateQuartettCardImage(Card card) {
+        Div CardImage = new Div();
+        Image image = new Image(card.getImagePath(), "Card Image");
+        image.getStyle().set("display", "block");
+        image.getStyle().set("margin-left", "auto");
+        image.getStyle().set("margin-right", "auto").setWidth("300px").setHeight("200px").set("object-fit", "cover");
+        CardImage.add(image);
+        return CardImage;
+    }
+
+    public Div CreateNameAndRole(Player currentPlayer, String role) {
+        Div NameAndRole = new Div();
+        // Player name
+        Span nameLabel = new Span(currentPlayer.getName());
+        nameLabel.getStyle().set("font-weight", "bold");
+        nameLabel.getStyle().set("display", "block");
+        nameLabel.getStyle().set("text-align", "left");
+        nameLabel.getStyle().setPaddingLeft("8px");
+        nameLabel.getStyle().set("color", "white");
+        NameAndRole.add(nameLabel);
+
+        Span PlayerRole = new Span(role);
+        PlayerRole.getStyle().set("font-weight", "bold");
+        PlayerRole.getStyle().set("display", "block");
+        PlayerRole.getStyle().set("text-align", "center");
+        PlayerRole.getStyle().set("color", "white");
+        NameAndRole.add(PlayerRole);
+
+        return NameAndRole;
+    }
+
+
+
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
