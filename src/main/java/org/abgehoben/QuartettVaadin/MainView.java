@@ -12,7 +12,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
@@ -27,7 +26,7 @@ public class MainView extends VerticalLayout {
         this.getStyle().set("background-repeat", "no-repeat").setHeight("100%");
 
         Div container = new Div();
-        container.getStyle().set("background", "rgba(14, 16, 17, 0.8)");
+        container.getStyle().set("background", "hsla(214, 10%, 6%, 0.8)");
         container.getStyle().set("padding", "20px");
         container.getStyle().set("border-radius", "10px");
         container.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");

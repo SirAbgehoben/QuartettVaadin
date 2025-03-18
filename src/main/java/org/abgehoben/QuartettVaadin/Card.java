@@ -1,5 +1,8 @@
 package org.abgehoben.QuartettVaadin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Card {
     private Integer id;
     private String Name;
@@ -41,5 +44,22 @@ public class Card {
     public Float getConsumption() {
         return Consumption;
     }
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("TopSpeed", TopSpeed);
+        attributes.put("zeroTo100", zeroTo100);
+        attributes.put("PS", PS);
+        attributes.put("Consumption", Consumption);
+        return attributes;
+    }
 
+    public Float get(String attribute) {
+        return switch (attribute) {
+            case "TopSpeed" -> TopSpeed;
+            case "zeroTo100" -> zeroTo100;
+            case "PS" -> PS;
+            case "Consumption" -> Consumption;
+            default -> null;
+        };
+    }
 }
