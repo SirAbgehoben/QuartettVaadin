@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -23,6 +24,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         if (quartettSession == null) {
             add(new Span("No active game found.")); //so, normally this should never happen...
+            UI.getCurrent().navigate("");
             return;
         }
 
@@ -41,8 +43,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         particleBackground.getStyle().set("overflow", "hidden");
         add(particleBackground);
 
-        UI CurrentUI = UI.getCurrent();
-        Span sessionInfo = new Span("Session ID: " + session.getSession().getId() + ", UI ID: " + CurrentUI);
+        Span sessionInfo = new Span("Session ID: " + session.getSession().getId() + ", UI ID: " + UI.getCurrent());
         sessionInfo.getStyle().set("position", "absolute");
         sessionInfo.getStyle().set("bottom", "10px");
         sessionInfo.getStyle().set("left", "10px");
@@ -90,66 +91,98 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         PlayerCard.setWidth("300px");
         PlayerCard.setHeight("450px");
 
-        Div NameAndRole = CreateNameAndRole(currentPlayer, role);
+        HorizontalLayout NameAndRole = CreateNameAndRole(currentPlayer, role);
         PlayerCard.add(NameAndRole);
 
         Div CardImage = CreateQuartettCardImage(card);
-        PlayerCard.add(CardImage);
+        PlayerCard.add(CardImage); //update
+
+        if (role.equals("You")) {
+            VerticalLayout playerButtons = createPlayerButtons(quartettSession, currentPlayer, opponentPlayer, card); //update
+            PlayerCard.add(playerButtons);
+        } else {
+            VerticalLayout attributesLayout = createPlayerAttributesSpan(card); //update
+            PlayerCard.add(attributesLayout);
+        }
+
+        return PlayerCard;
+    }
 
 
+
+    public VerticalLayout createPlayerAttributesSpan(Card card) {
+        VerticalLayout attributesLayout = new VerticalLayout();
+        for (String attribute : card.getAttributes().keySet()) {
+            Span attributes = new Span(attribute + ": " + card.getAttributes().get(attribute));
+            attributes.setWidthFull();
+            attributes.getStyle().set("color", "white");
+            attributes.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+            attributes.getStyle().set("backdrop-filter", "blur(20px)");
+            attributes.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
+            attributes.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
+            attributes.getStyle().setTransition("all 0.3s ease");
+            attributes.getStyle().setHeight("30px");
+            attributes.getStyle().setBorderRadius("4px");
+            attributesLayout.add(attributes);
+        }
+        attributesLayout.setSpacing(false);
+        attributesLayout.setPadding(false);
+        attributesLayout.getStyle().set("gap", "8px");
+        attributesLayout.getStyle().setPaddingTop("4px");
+        attributesLayout.getStyle().setPaddingBottom("4px");
+        return attributesLayout;
+    }
+
+    public VerticalLayout createPlayerButtons(QuartettSession quartettSession, Player currentPlayer, Player opponentPlayer, Card card) {
         VerticalLayout attributesLayout = new VerticalLayout();
         attributesLayout.setWidthFull();
         attributesLayout.setPadding(false);
         attributesLayout.setSpacing(false);
+        for (String attribute : card.getAttributes().keySet()) {
+            Button attributeButton = CreateButton(card, attribute);
+            attributesLayout.add(attributeButton);
 
-        if (role.equals("You")) {
-            for (String attribute : card.getAttributes().keySet()) {
-                Button attributeButton = new Button(attribute + ": " + card.getAttributes().get(attribute));
-                attributeButton.setWidthFull();
-                attributeButton.getStyle().set("color", "white");
-                attributeButton.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
-                attributeButton.getStyle().set("backdrop-filter", "blur(20px)");
-                attributeButton.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
-                attributeButton.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
-                attributeButton.getStyle().setTransition("all 0.3s ease");
-                attributeButton.getStyle().setHeight("30px");
-                attributeButton.setDisableOnClick(true);
-                attributesLayout.add(attributeButton);
-
-
-                attributeButton.addClickListener(event -> {
-                    attributesLayout.getChildren().forEach(component -> {
-                        if (component instanceof Button) {
-                            ((Button) component).setEnabled(false);
-                        }
-                    });
-
-                    boolean playerWon = quartettSession.onButtonClick(attribute, currentPlayer, opponentPlayer);
-                    if (playerWon) {
-                        attributeButton.getStyle().set("background-color", "green");
-                    } else {
-                        attributeButton.getStyle().set("background-color", "red");
-                    }
+            attributeButton.addClickListener(event -> {
+                attributesLayout.getChildren().forEach(component -> {
+                    if (component instanceof Button) {((Button) component).setEnabled(false);}
                 });
+                boolean playerWon = quartettSession.onButtonClick(attribute, currentPlayer, opponentPlayer);
+                if (playerWon) {
+                    attributeButton.getStyle().set("background-color", "green");
+                } else {
+                    attributeButton.getStyle().set("background-color", "red");
+                }
+            });
 
-            }
-        } else {
-            for (String attribute : card.getAttributes().keySet()) {
-                Span attributes = new Span(attribute + ": " + card.getAttributes().get(attribute));
-                attributes.setWidthFull();
-                attributes.getStyle().set("color", "white");
-                attributes.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
-                attributes.getStyle().set("backdrop-filter", "blur(20px)");
-                attributes.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
-                attributes.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
-                attributes.getStyle().setTransition("all 0.3s ease");
-                attributesLayout.add(attributes);
-            }
         }
-        PlayerCard.add(attributesLayout);
+        return attributesLayout;
+    }
 
+    public Button CreateButton(Card card, String attribute) {
+        HorizontalLayout buttonContent = new HorizontalLayout();
+        buttonContent.setWidthFull();
+        buttonContent.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        buttonContent.setAlignItems(Alignment.CENTER);
 
-        return PlayerCard;
+        Span attributeName = new Span(attribute + ":");
+        attributeName.getStyle().set("color", "white");
+
+        Span attributeValue = new Span(card.getAttributes().get(attribute).toString());
+        attributeValue.getStyle().set("color", "white");
+        attributeValue.getStyle().setTextAlign(Style.TextAlign.RIGHT); //Why doesnt this work?
+        buttonContent.add(attributeName, attributeValue);
+
+        Button attributeButton = new Button(buttonContent);
+        attributeButton.setWidthFull();
+        attributeButton.getStyle().set("color", "white");
+        attributeButton.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+        attributeButton.getStyle().set("backdrop-filter", "blur(20px)");
+        attributeButton.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
+        attributeButton.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
+        attributeButton.getStyle().setTransition("all 0.3s ease");
+        attributeButton.getStyle().setHeight("30px");
+        attributeButton.setDisableOnClick(true);
+        return attributeButton;
     }
 
     public Div CreateQuartettCardImage(Card card) {
@@ -158,26 +191,36 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         image.getStyle().set("display", "block");
         image.getStyle().set("margin-left", "auto");
         image.getStyle().set("margin-right", "auto").setWidth("300px").setHeight("200px").set("object-fit", "cover");
+        image.getStyle().setBorderRadius("4px");
+        image.getStyle().setMarginTop("4px");
+        image.getStyle().setMarginBottom("2px");
         CardImage.add(image);
         return CardImage;
     }
 
-    public Div CreateNameAndRole(Player currentPlayer, String role) {
-        Div NameAndRole = new Div();
+    public HorizontalLayout CreateNameAndRole(Player currentPlayer, String role) {
+        HorizontalLayout NameAndRole = new HorizontalLayout();
         // Player name
         Span nameLabel = new Span(currentPlayer.getName());
-        nameLabel.getStyle().set("font-weight", "bold");
-        nameLabel.getStyle().set("display", "block");
-        nameLabel.getStyle().set("text-align", "left");
-        nameLabel.getStyle().setPaddingLeft("8px");
-        nameLabel.getStyle().set("color", "white");
+        nameLabel.getStyle().set("font-weight", "bold")
+                .set("display", "block")
+                .set("text-align", "left")
+                .setPaddingLeft("8px")
+                .set("color", "hsla(214, 87%, 92%, 0.8)")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), hsla(214, 90%, 55%, 0.13))")
+                .set("padding", "2px 8px")
+                .set("border-radius", "4px");
         NameAndRole.add(nameLabel);
 
         Span PlayerRole = new Span(role);
-        PlayerRole.getStyle().set("font-weight", "bold");
-        PlayerRole.getStyle().set("display", "block");
-        PlayerRole.getStyle().set("text-align", "center");
-        PlayerRole.getStyle().set("color", "white");
+        PlayerRole.getStyle().set("font-weight", "bold")
+                .set("display", "block")
+                .set("text-align", "left")
+                .setPaddingLeft("8px")
+                .set("color", "hsla(214, 87%, 92%, 0.8)")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), hsla(214, 90%, 55%, 0.13))")
+                .set("padding", "2px 8px")
+                .set("border-radius", "4px");
         NameAndRole.add(PlayerRole);
 
         return NameAndRole;

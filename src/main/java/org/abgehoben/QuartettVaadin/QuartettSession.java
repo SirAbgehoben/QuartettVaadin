@@ -49,6 +49,7 @@ public class QuartettSession {
 
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
+        System.out.println("Player " + winnerPlayer.getName() + " won the round");
         playerOne.setNextCard();
         playerTwo.setNextCard();
     }
@@ -74,11 +75,26 @@ public class QuartettSession {
     public boolean onButtonClick(String attribute, Player playerClicker, Player Opponent) {
         Float clickedAttributeValue = playerClicker.card.get(attribute);
         Float opponentAttributeValue = Opponent.card.get(attribute);
+
         //Smaller == better
+        boolean GameResult;
         if (attribute.equals("Consumption") || attribute.equals("zeroTo100")) {
-            return clickedAttributeValue < opponentAttributeValue;
+            if (clickedAttributeValue < opponentAttributeValue) {
+                NextRound(Opponent, playerClicker);
+                GameResult = true;
+            } else {
+                NextRound(playerClicker, Opponent);
+                GameResult = false;
+            }
         } else {
-            return clickedAttributeValue > opponentAttributeValue;
+            if (clickedAttributeValue < opponentAttributeValue) {
+                NextRound(playerClicker, Opponent); //looser, winner
+                GameResult = false;
+            } else {
+                NextRound(Opponent, playerClicker);
+                GameResult = true;
+            }
         }
+        return GameResult;
     }
 }
