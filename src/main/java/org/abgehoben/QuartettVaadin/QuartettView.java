@@ -11,8 +11,16 @@ import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Route("quartett")
 public class QuartettView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
+
+    private HorizontalLayout playerCardLayout;
+
+
+    public static Map<VaadinSession, QuartettView> sessionViewMap = new HashMap<>();
 
     public QuartettView() {
         VaadinSession session = VaadinSession.getCurrent();
@@ -27,6 +35,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
             UI.getCurrent().navigate("");
             return;
         }
+
+        sessionViewMap.put(session, this);
 
         setSizeFull(); // Make the view take up the full browser window
         setAlignItems(Alignment.CENTER); // Center content horizontally
@@ -52,7 +62,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         this.add(sessionInfo);
 
         // Create a horizontal layout to hold the player cards
-        HorizontalLayout playerCardLayout = new HorizontalLayout();
+        playerCardLayout = new HorizontalLayout();
         playerCardLayout.setWidthFull();
         playerCardLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         playerCardLayout.setAlignItems(Alignment.CENTER);
@@ -71,12 +81,39 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         // Create the current player's card (on the left)
         Div currentPlayerCard = createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You");
-        playerCardLayout.add(currentPlayerCard);
+        playerCardLayout.add(currentPlayerCard); //add
 
         // Create the opponent's card (on the right)
         Div opponentPlayerCard = createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent");
-        playerCardLayout.add(opponentPlayerCard);
+        playerCardLayout.add(opponentPlayerCard); //add
         add(playerCardLayout);
+    }
+
+    public void updatePlayerCards() {
+        VaadinSession session = VaadinSession.getCurrent();
+        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
+
+        if (quartettSession == null) {
+            return;
+        }
+
+        // Determine which player is the current user and which is the opponent
+        Player currentPlayer;
+        Player opponentPlayer;
+        if (quartettSession.playerOne.getSessionId().getSession().getId().equals(session.getSession().getId())) {
+            currentPlayer = quartettSession.playerOne;
+            opponentPlayer = quartettSession.playerTwo;
+        } else {
+            currentPlayer = quartettSession.playerTwo;
+            opponentPlayer = quartettSession.playerOne;
+        }
+
+        playerCardLayout.removeAll();
+        Div newCurrentPlayerCard = createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
+        playerCardLayout.add(newCurrentPlayerCard); //add new card
+
+        Div newOpponentPlayerCard = createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"); //create new card
+        playerCardLayout.add(newOpponentPlayerCard); //add new card
     }
 
     private Div createPlayerCard(QuartettSession quartettSession, Player currentPlayer, Player opponentPlayer, Card card, String role) {
@@ -225,6 +262,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         return NameAndRole;
     }
+
+
 
 
 

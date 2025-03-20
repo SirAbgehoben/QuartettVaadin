@@ -1,5 +1,6 @@
 package org.abgehoben.QuartettVaadin;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
@@ -40,9 +41,16 @@ public class Player {
         System.out.println(CardName + " with cardId " + cardId);
         card.set(cardId, CardName, TopSpeed, zeroTo100, PS, Consumption);
     }
+    public void UpdateCardDisplay() {
+        UI ui = LoginService.getUIForSession(SessionId);
+        QuartettView quartettView = QuartettView.sessionViewMap.get(SessionId);
+        if (quartettView != null) {
+            ui.access(quartettView::updatePlayerCards);
+        }
+    }
 
 
-    public void AddCardToDeck(Integer cardId) {
+    public void AddCardToDeck() {
         Deck.add(0); //let's just try with index
     }
     public void RemoveCardFromDeck(Integer cardId) {

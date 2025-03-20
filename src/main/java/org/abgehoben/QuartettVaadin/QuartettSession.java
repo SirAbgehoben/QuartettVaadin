@@ -44,7 +44,7 @@ public class QuartettSession {
 
     public void NextRound(Player looserPlayer, Player winnerPlayer) {
         Integer cardOfLostPlayer = looserPlayer.card.getId();//get player card id of lost player
-        winnerPlayer.AddCardToDeck(cardOfLostPlayer);//add card id to playerDeck of player who won at the back of the deck
+        winnerPlayer.AddCardToDeck(/*cardOfLostPlayer*/);//add card id to playerDeck of player who won at the back of the deck
         looserPlayer.RemoveCardFromDeck(cardOfLostPlayer);//next card for player who lost the round (remove current card from deck)
 
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
@@ -52,6 +52,9 @@ public class QuartettSession {
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
         playerOne.setNextCard();
         playerTwo.setNextCard();
+
+        playerOne.UpdateCardDisplay();
+        playerTwo.UpdateCardDisplay();
     }
 
     public void endSession() {
