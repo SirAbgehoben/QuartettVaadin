@@ -127,12 +127,17 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
     public Span CardsLeft(Player player) {
         Span CardsLeft = new Span("Cards Left: " + player.getCardsLeft());
+
+        double ratio = player.getCardsLeft() / 16.0;
+        int hue = (int) (ratio * 120);
+        String color = "hsla(" + hue + ", 90%, 55%, 0.13)";
+
         CardsLeft.getStyle().set("font-weight", "bold")
                 .set("display", "block")
                 .set("text-align", "left")
                 .setPaddingLeft("8px")
                 .set("color", "hsla(214, 87%, 92%, 0.8)")
-                .setBackground("linear-gradient(to left, rgba(255,0,0,0), hsla(214, 90%, 55%, 0.13))")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), " + color + ")")
                 .set("padding", "2px 8px")
                 .set("border-radius", "4px");
         return CardsLeft;
