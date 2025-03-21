@@ -62,4 +62,7 @@ public class Player {
         Deck.add(cardId);
     }
 
+    public Integer getCardsLeft() {
+        return Deck.size();
+    }
 }

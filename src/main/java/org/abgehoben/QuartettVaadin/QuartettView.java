@@ -119,9 +119,24 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
             PlayerCard.add(attributesLayout);
         }
 
+        Span CardsLeft = CardsLeft(currentPlayer);
+        PlayerCard.add(CardsLeft);
+
         return PlayerCard;
     }
 
+    public Span CardsLeft(Player player) {
+        Span CardsLeft = new Span("Cards Left: " + player.getCardsLeft());
+        CardsLeft.getStyle().set("font-weight", "bold")
+                .set("display", "block")
+                .set("text-align", "left")
+                .setPaddingLeft("8px")
+                .set("color", "hsla(214, 87%, 92%, 0.8)")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), hsla(214, 90%, 55%, 0.13))")
+                .set("padding", "2px 8px")
+                .set("border-radius", "4px");
+        return CardsLeft;
+    }
 
     public VerticalLayout createPlayerAttributesSpan(Card card) {
         VerticalLayout attributesLayout = new VerticalLayout();
