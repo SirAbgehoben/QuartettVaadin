@@ -1,5 +1,6 @@
 package org.abgehoben.QuartettVaadin;
 
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -7,7 +8,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -89,32 +89,6 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         add(playerCardLayout);
     }
 
-    public void updatePlayerCards() {
-        VaadinSession session = VaadinSession.getCurrent();
-        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
-
-        if (quartettSession == null) {
-            return;
-        }
-
-        // Determine which player is the current user and which is the opponent
-        Player currentPlayer;
-        Player opponentPlayer;
-        if (quartettSession.playerOne.getSessionId().getSession().getId().equals(session.getSession().getId())) {
-            currentPlayer = quartettSession.playerOne;
-            opponentPlayer = quartettSession.playerTwo;
-        } else {
-            currentPlayer = quartettSession.playerTwo;
-            opponentPlayer = quartettSession.playerOne;
-        }
-
-        playerCardLayout.removeAll();
-        Div newCurrentPlayerCard = createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
-        playerCardLayout.add(newCurrentPlayerCard); //add new card
-
-        Div newOpponentPlayerCard = createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"); //create new card
-        playerCardLayout.add(newOpponentPlayerCard); //add new card
-    }
 
     private Div createPlayerCard(QuartettSession quartettSession, Player currentPlayer, Player opponentPlayer, Card card, String role) {
         Div PlayerCard = new Div();
@@ -134,6 +108,9 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         Div CardImage = CreateQuartettCardImage(card);
         PlayerCard.add(CardImage); //update
 
+        Span CardName = CreateCardName(card);
+        PlayerCard.add(CardName);
+
         if (role.equals("You")) {
             VerticalLayout playerButtons = createPlayerButtons(quartettSession, currentPlayer, opponentPlayer, card); //update
             PlayerCard.add(playerButtons);
@@ -146,28 +123,51 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
     }
 
 
-
     public VerticalLayout createPlayerAttributesSpan(Card card) {
         VerticalLayout attributesLayout = new VerticalLayout();
         for (String attribute : card.getAttributes().keySet()) {
-            Span attributes = new Span(attribute + ": " + card.getAttributes().get(attribute));
-            attributes.setWidthFull();
-            attributes.getStyle().set("color", "white");
-            attributes.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
-            attributes.getStyle().set("backdrop-filter", "blur(20px)");
-            attributes.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
-            attributes.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
-            attributes.getStyle().setTransition("all 0.3s ease");
-            attributes.getStyle().setHeight("30px");
-            attributes.getStyle().setBorderRadius("4px");
-            attributesLayout.add(attributes);
+            Div attributeDiv = CreateAttributeDiv(card, attribute);
+            attributesLayout.add(attributeDiv);
         }
         attributesLayout.setSpacing(false);
         attributesLayout.setPadding(false);
         attributesLayout.getStyle().set("gap", "8px");
         attributesLayout.getStyle().setPaddingTop("4px");
-        attributesLayout.getStyle().setPaddingBottom("4px");
+        attributesLayout.getStyle().setPaddingBottom("4px").setHeight("152px");
         return attributesLayout;
+    }
+
+    public Div CreateAttributeDiv(Card card, String attribute) {
+
+        HorizontalLayout attributeContent = new HorizontalLayout();
+        attributeContent.setWidthFull();
+        attributeContent.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        attributeContent.setAlignItems(Alignment.CENTER);
+        attributeContent.getStyle().set("padding", "0 4px");
+
+        Span attributeName = new Span(attribute + ": ");
+        attributeName.getStyle().set("color", "white");
+        attributeName.getStyle().set("text-align", "left");
+        attributeName.setWidth("50%");
+
+        Span attributeValue = new Span(card.getAttributes().get(attribute).toString());
+        attributeValue.getStyle().set("color", "white");
+        attributeValue.getStyle().set("text-align", "right");
+        attributeValue.setWidth("50%");
+
+        Div attributes = new Div(attributeContent);
+        attributes.setWidthFull();
+        attributes.getStyle().set("color", "white");
+        attributes.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+        attributes.getStyle().set("backdrop-filter", "blur(20px)");
+        attributes.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
+        attributes.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
+        attributes.getStyle().setHeight("29px");
+        attributeContent.add(attributeName, attributeValue);
+        attributes.getStyle().setBorderRadius("4px");
+
+
+        return attributes;
     }
 
     public VerticalLayout createPlayerButtons(QuartettSession quartettSession, Player currentPlayer, Player opponentPlayer, Card card) {
@@ -201,13 +201,15 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         buttonContent.setJustifyContentMode(JustifyContentMode.BETWEEN);
         buttonContent.setAlignItems(Alignment.CENTER);
 
-        Span attributeName = new Span(attribute + ":");
+        Span attributeName = new Span(attribute + ": ");
         attributeName.getStyle().set("color", "white");
+        attributeName.getStyle().set("text-align", "left");
+        attributeName.setWidth("50%");
 
         Span attributeValue = new Span(card.getAttributes().get(attribute).toString());
         attributeValue.getStyle().set("color", "white");
-        attributeValue.getStyle().setTextAlign(Style.TextAlign.RIGHT); //Why doesnt this work?
-        buttonContent.add(attributeName, attributeValue);
+        attributeValue.getStyle().set("text-align", "right");
+        attributeValue.setWidth("50%");
 
         Button attributeButton = new Button(buttonContent);
         attributeButton.setWidthFull();
@@ -219,7 +221,24 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         attributeButton.getStyle().setTransition("all 0.3s ease");
         attributeButton.getStyle().setHeight("30px");
         attributeButton.setDisableOnClick(true);
+
+
+        buttonContent.add(attributeName, attributeValue);
+        buttonContent.getStyle().setMinWidth("290px");
         return attributeButton;
+    }
+
+    public Span CreateCardName(Card card) {
+        Span nameLabel = new Span(card.getName());
+        nameLabel.getStyle().set("font-weight", "bold")
+                .set("display", "block")
+                .set("text-align", "left")
+                .setPaddingLeft("8px")
+                .set("color", "hsla(214, 87%, 92%, 0.8)")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), hsla(214, 90%, 55%, 0.13))")
+                .set("padding", "2px 8px")
+                .set("border-radius", "4px");
+        return nameLabel;
     }
 
     public Div CreateQuartettCardImage(Card card) {
@@ -263,9 +282,32 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         return NameAndRole;
     }
 
+    public void updatePlayerCards() {
+        VaadinSession session = VaadinSession.getCurrent();
+        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
 
+        if (quartettSession == null) {
+            return;
+        }
 
+        // Determine which player is the current user and which is the opponent
+        Player currentPlayer;
+        Player opponentPlayer;
+        if (quartettSession.playerOne.getSessionId().getSession().getId().equals(session.getSession().getId())) {
+            currentPlayer = quartettSession.playerOne;
+            opponentPlayer = quartettSession.playerTwo;
+        } else {
+            currentPlayer = quartettSession.playerTwo;
+            opponentPlayer = quartettSession.playerOne;
+        }
 
+        playerCardLayout.removeAll();
+        Div newCurrentPlayerCard = createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
+        playerCardLayout.add(newCurrentPlayerCard); //add new card
+
+        Div newOpponentPlayerCard = createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"); //create new card
+        playerCardLayout.add(newOpponentPlayerCard); //add new card
+    }
 
 
     @Override

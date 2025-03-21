@@ -50,8 +50,8 @@ public class Player {
     }
 
 
-    public void AddCardToDeck() {
-        Deck.add(0); //let's just try with index
+    public void AddCardToDeck(Integer cardId) {
+        Deck.add(cardId); //let's just try with index
     }
     public void RemoveCardFromDeck(Integer cardId) {
         Deck.remove(cardId);

@@ -2,9 +2,7 @@ package org.abgehoben.QuartettVaadin;
 
 import com.vaadin.flow.component.UI;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
@@ -67,7 +65,7 @@ public class MainView extends VerticalLayout {
 
             if (greeting.equals("name cannot be empty") || greeting.equals("name already taken")) {
                 Notification notification = new Notification(greeting, 4000);
-                notification.addThemeVariants(new NotificationVariant[]{NotificationVariant.LUMO_ERROR});
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 notification.open();
             }
 
@@ -77,26 +75,26 @@ public class MainView extends VerticalLayout {
                 spinner.addClassName("lds-ripple");
                 spinner.getStyle().setHeight("34px");
                 spinner.getStyle().setWidth("112px");
-                spinner.add(new Component[]{new Div(), new Div()});
+                spinner.add(new Div(), new Div());
 
                 textField.setEnabled(false);
                 container.replace(button, spinner);
 
                 Notification notification = new Notification(greeting, 4000);
-                if (greeting.equals("Joined Queue") || greeting.equals("Game Started")) {
-                    notification.addThemeVariants(new NotificationVariant[]{NotificationVariant.LUMO_SUCCESS});
+                if (greeting.equals("Joined Queue")) {
+                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 }
 
                 if (greeting.equals("already in Queue") || greeting.equals("already in Game")) {
-                    notification.addThemeVariants(new NotificationVariant[]{NotificationVariant.LUMO_WARNING});
+                    notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
                 }
 
                 notification.open();
             }
 
         });
-        button.addThemeVariants(new ButtonVariant[]{ButtonVariant.LUMO_PRIMARY});
-        button.addClickShortcut(Key.ENTER, new KeyModifier[0]);
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        button.addClickShortcut(Key.ENTER);
         button.getStyle().set("height", "34px");
         button.getStyle().set("background", "rgba(14, 16, 17, 0.2)");
         button.getStyle().set("backdrop-filter", "blur(10px)");
@@ -112,8 +110,8 @@ public class MainView extends VerticalLayout {
                 button.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
             }));
         });
-        container.add(new Component[]{textField, button});
-        this.add(new Component[]{container});
-        this.addClassNames(new String[]{"p-m"});
+        container.add(textField, button);
+        this.add(container);
+        this.addClassNames("p-m");
     }
 }
