@@ -3,6 +3,8 @@ package org.abgehoben.QuartettVaadin;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -112,6 +114,28 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         Div newOpponentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"); //create new card
         playerCardLayout.add(newOpponentPlayerCard); //add new card
+    }
+
+    public void showTimeNotification() {
+        Span countdownSpan = new Span();
+
+        Notification notification = new Notification(countdownSpan);
+        notification.setDuration(5000);
+        notification.setPosition(Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
+        notification.open();
+
+        UI currentUI = UI.getCurrent();
+
+        new Thread(() -> {
+            for (int i = 4; i >= 0; i--) {
+                final String secondsLeft = String.valueOf(i);
+                currentUI.access(() -> countdownSpan.setText(secondsLeft));
+                try {Thread.sleep(1000);}
+                catch (InterruptedException e) {Thread.currentThread().interrupt(); return;}
+            }
+            currentUI.access(notification::close);
+        }).start();
     }
 
 

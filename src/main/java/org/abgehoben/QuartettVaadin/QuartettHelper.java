@@ -1,5 +1,6 @@
 package org.abgehoben.QuartettVaadin;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -124,15 +125,20 @@ public class QuartettHelper {
                 attributesLayout.getChildren().forEach(component -> {
                     if (component instanceof Button) {((Button) component).setEnabled(false);}
                 });
-                if (quartettSession.AlreadyClicked) {
-                    return;
-                }
+                if (quartettSession.AlreadyClicked) {return;}
                 boolean playerWon = quartettSession.onButtonClick(attribute, currentPlayer, opponentPlayer);
                 if (playerWon) {
                     attributeButton.getStyle().set("background-color", "green");
                 } else {
                     attributeButton.getStyle().set("background-color", "red");
                 }
+                quartettSession.getPlayers().forEach((session, name) -> {
+                    UI ui = LoginService.getUIForSession(session);
+                    QuartettView quartettView = QuartettView.sessionViewMap.get(session);
+                    if (quartettView != null) {
+                        ui.access(quartettView::showTimeNotification);
+                    }
+                });
             });
 
         }
@@ -225,5 +231,4 @@ public class QuartettHelper {
 
         return NameAndRole;
     }
-
 }

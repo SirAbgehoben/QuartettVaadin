@@ -49,7 +49,6 @@ public class Player {
         }
     }
 
-
     public void AddCardToDeck(Integer cardId) {
         Deck.add(cardId); //let's just try with index
     }

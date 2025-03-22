@@ -10,7 +10,7 @@ import java.util.TimerTask;
 public class QuartettSession {
 
     public static ArrayList<QuartettSession> AktiveSessions = new ArrayList<>();
-    public static int QuartettSessionIdCounter = 0; //using a static means that it is shared between all instances of the class
+    public static int QuartettSessionIdCounter = 0;
 
     private final HashMap<VaadinSession, String> usersInSession = new HashMap<>(); //session, name
 
@@ -52,6 +52,10 @@ public class QuartettSession {
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
+        scheduleNextCard();
+    }
+
+    private void scheduleNextCard() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
