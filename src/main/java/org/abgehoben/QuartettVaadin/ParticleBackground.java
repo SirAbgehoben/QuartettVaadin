@@ -15,12 +15,11 @@ public class ParticleBackground extends VerticalLayout {
     String particlesConfigJson;
 
     public ParticleBackground() {
-        setId("particles-js"); // Set the ID directly on the VerticalLayout
+        setId("particles-js");
     } //particlesConfig is now directly configured In particles.js
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        attachEvent.getUI();
-        UI.getCurrent().getPage().executeJs("particlesJS('particles-js', $0)", particlesConfigJson); //needs a UI, but UI is null after forwarding from mainView.
+        UI.getCurrent().access(() -> UI.getCurrent().getPage().executeJs("setTimeout(function() { particlesJS('particles-js', $0); }, 1)", particlesConfigJson));
     }
 }

@@ -45,6 +45,7 @@ public class QuartettHelper {
         return PlayerCard;
     }
 
+
     public static Span CardsLeft(Player player) {
         Span CardsLeft = new Span("Cards Left: " + player.getCardsLeft());
 
