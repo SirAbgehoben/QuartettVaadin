@@ -4,6 +4,8 @@ import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class QuartettSession {
 
@@ -50,11 +52,19 @@ public class QuartettSession {
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
-        playerOne.setNextCard();
-        playerTwo.setNextCard();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                playerOne.setNextCard();
+                playerTwo.setNextCard();
 
-        playerOne.UpdateCardDisplay();
-        playerTwo.UpdateCardDisplay();
+                playerOne.UpdateCardDisplay();
+                playerTwo.UpdateCardDisplay();
+                AlreadyClicked = false;
+                timer.cancel(); // Stop the timer after execution
+            }
+        }, 4000);
     }
 
     public void endSession() {
@@ -74,8 +84,10 @@ public class QuartettSession {
         return usersInSession;
     }
 
+    public Boolean AlreadyClicked = false;
 
     public boolean onButtonClick(String attribute, Player playerClicker, Player Opponent) {
+        AlreadyClicked = true;
         Float clickedAttributeValue = playerClicker.card.get(attribute);
         Float opponentAttributeValue = Opponent.card.get(attribute);
 

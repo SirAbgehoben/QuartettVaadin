@@ -21,6 +21,6 @@ public class ParticleBackground extends VerticalLayout {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         attachEvent.getUI();
-        UI.getCurrent().getPage().executeJs("particlesJS('particles-js', $0)", particlesConfigJson); //needs an UI, but UI is null after forwarding from mainView.
+        UI.getCurrent().getPage().executeJs("particlesJS('particles-js', $0)", particlesConfigJson); //needs a UI, but UI is null after forwarding from mainView.
     }
 }

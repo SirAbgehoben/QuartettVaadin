@@ -7,11 +7,9 @@ import com.vaadin.flow.theme.Theme;
 
 @PWA(
         name = "QuartettVaadin",
-        shortName = "qtvaadin"
+        shortName = "QtVaadin"
 )
-@Push //I think this actually fixed the issue(ui not forwarding) SO KEEEEEEEP IT.
+@Push
 @Theme("Loading-Circle")
 public class AppShellConfiguratorImpl implements AppShellConfigurator {
-    public AppShellConfiguratorImpl() {
-    }
 }

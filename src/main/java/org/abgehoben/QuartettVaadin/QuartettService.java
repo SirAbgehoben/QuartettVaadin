@@ -72,9 +72,8 @@ public class QuartettService {
             });
         }
         quartettSession.endSession();
+        //noinspection ReassignedVariable,UnusedAssignment
         quartettSession = null;
-
-        //send users to LoginView
     }
 
     public static ArrayList<ArrayList<Integer>> createCardsDeck() {
@@ -102,7 +101,7 @@ public class QuartettService {
     }
 
     public static QuartettSession getQuartettSessionForPlayer(VaadinSession session) {
-        for (QuartettSession quartettSession : QuartettSession.AktiveSessions) { //because i cant fucking remember it, the first is generating a new variable with the name : (in) the aktive sessions hashmap
+        for (QuartettSession quartettSession : QuartettSession.AktiveSessions) {
             if (quartettSession.getPlayers().containsKey(session)) {
                 return quartettSession;
             }

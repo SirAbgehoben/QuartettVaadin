@@ -55,7 +55,7 @@ public class MainView extends VerticalLayout {
         textField.getStyle().set("--lumo-disabled-text-color", "hsla(214, 0%, 100%, 0.32)"); //vaadin-input-field-disabled-label-color
         textField.getStyle().setPaddingRight("20px");
         textField.getStyle().set("color", "hsla(214, 96%, 96%, 0.9)");
-        textField.setMaxLength(16);
+        textField.setMaxLength(12);
 
         Button button = new Button("Join Queue");
 
