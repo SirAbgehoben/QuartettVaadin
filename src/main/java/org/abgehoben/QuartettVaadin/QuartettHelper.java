@@ -46,6 +46,36 @@ public class QuartettHelper {
         return PlayerCard;
     }
 
+    public static Div createOpponentBlankCard(Player opponentPlayer) {
+        Div PlayerCard = new Div();
+        PlayerCard.getStyle().set("border", "2px solid hsla(214, 64%, 82%, 0.23)");
+        PlayerCard.getStyle().set("border-radius", "10px");
+        PlayerCard.getStyle().set("padding", "10px");
+        PlayerCard.getStyle().set("margin", "10px");
+        PlayerCard.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+        PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
+        PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
+        PlayerCard.setWidth("300px");
+        PlayerCard.setHeight("450px");
+
+        HorizontalLayout NameAndRole = CreateNameAndRole(opponentPlayer, "Opponent");
+        PlayerCard.add(NameAndRole);
+
+//        Image image = new Image("CardBack.svg", "Card Image");
+//        image.getStyle().set("display", "block");
+//        image.getStyle().set("margin-left", "auto");
+//        image.getStyle().set("object-fit", "cover");
+//        image.getStyle().setMarginTop("4px");
+//        image.getStyle().setMarginBottom("2px");
+//        PlayerCard.add(image);
+
+        PlayerCard.getStyle().set("background-image", "url(CardBackLr.png)");
+        PlayerCard.getStyle().set("background-size", "cover");
+        PlayerCard.getStyle().set("background-repeat", "no-repeat");
+        PlayerCard.getStyle().set("background-position", "center");
+        return PlayerCard;
+    }
+
 
     public static Span CardsLeft(Player player) {
         Span CardsLeft = new Span("Cards Left: " + player.getCardsLeft());

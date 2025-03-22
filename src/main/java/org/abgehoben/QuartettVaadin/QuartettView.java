@@ -81,11 +81,12 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         // Create the current player's card (on the left)
         Div currentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You");
-        playerCardLayout.add(currentPlayerCard); //add
+        playerCardLayout.add(currentPlayerCard);
 
         // Create the opponent's card (on the right)
         Div opponentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent");
-        playerCardLayout.add(opponentPlayerCard); //add
+//        Div opponentPlayerCard = QuartettHelper.createOpponentBlankCard(opponentPlayer);
+        playerCardLayout.add(opponentPlayerCard);
         add(playerCardLayout);
     }
 

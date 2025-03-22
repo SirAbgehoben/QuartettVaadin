@@ -18,7 +18,7 @@ import com.vaadin.flow.server.VaadinSession;
 public class MainView extends VerticalLayout {
     public MainView(LoginService service) {
 
-        this.getStyle().set("background-image", "url('https://images6.alphacoders.com/113/1137853.png')");
+        this.getStyle().set("background-image", "url(miku.png)");
         this.getStyle().set("background-position", "center");
         this.getStyle().set("background-size", "cover");
         this.getStyle().set("background-repeat", "no-repeat").setHeight("100%");
