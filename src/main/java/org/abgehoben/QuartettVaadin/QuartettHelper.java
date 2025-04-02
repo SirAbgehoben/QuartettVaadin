@@ -17,7 +17,7 @@ public class QuartettHelper {
         PlayerCard.getStyle().set("border-radius", "10px");
         PlayerCard.getStyle().set("padding", "10px");
         PlayerCard.getStyle().set("margin", "10px");
-        PlayerCard.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+        PlayerCard.getStyle().set("background-color", "hsla(0, 0.00%, 0.00%, 0.05)");
         PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
         PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
         PlayerCard.setWidth("300px");
@@ -27,16 +27,21 @@ public class QuartettHelper {
         PlayerCard.add(NameAndRole);
 
         Div CardImage = CreateQuartettCardImage(card);
-        PlayerCard.add(CardImage); //update
+        PlayerCard.add(CardImage);
 
         Span CardName = CreateCardName(card);
         PlayerCard.add(CardName);
 
         if (role.equals("You")) {
-            VerticalLayout playerButtons = createPlayerButtons(quartettSession, currentPlayer, opponentPlayer, card); //update
-            PlayerCard.add(playerButtons);
+            if (quartettSession.getAktivePlayer().equals(currentPlayer)) {
+                VerticalLayout playerButtons = createPlayerButtons(quartettSession, currentPlayer, opponentPlayer, card);
+                PlayerCard.add(playerButtons);
+            } else {
+                VerticalLayout attributesLayout = createPlayerAttributesSpan(card);
+                PlayerCard.add(attributesLayout);
+            }
         } else {
-            VerticalLayout attributesLayout = createPlayerAttributesSpan(card); //update
+            VerticalLayout attributesLayout = createPlayerAttributesSpan(card);
             PlayerCard.add(attributesLayout);
         }
 

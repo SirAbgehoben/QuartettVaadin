@@ -17,6 +17,7 @@ public class QuartettSession {
     private final int id;
     public Player playerOne;
     public Player playerTwo;
+    private Player AktivePlayer;
 
     public QuartettSession(int id, ArrayList<ArrayList<Integer>> decks) {
         this.id = id;
@@ -27,6 +28,7 @@ public class QuartettSession {
         ArrayList<Integer> deckPlayerTwo = decks.get(1);
         playerOne = new Player(deckPlayerOne);
         playerTwo = new Player(deckPlayerTwo);
+        AktivePlayer = playerOne;
     }
     public void InitializePlayers() {
         ArrayList<String> userNamesInSession = new ArrayList<>();
@@ -52,6 +54,8 @@ public class QuartettSession {
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
+        //setAktivePlayer = winnerPlayer;
+        
         //flip the opponent card
         scheduleNextCard();
     }
@@ -88,6 +92,13 @@ public class QuartettSession {
     }
     public HashMap<VaadinSession, String> getPlayers() {
         return usersInSession;
+    }
+
+    public Player getAktivePlayer() {
+        return AktivePlayer;
+    }
+    public void setAktivePlayer(Player aktivePlayer) {
+        AktivePlayer = aktivePlayer;
     }
 
     public Boolean AlreadyClicked = false;
