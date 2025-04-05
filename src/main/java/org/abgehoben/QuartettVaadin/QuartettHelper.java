@@ -18,7 +18,7 @@ public class QuartettHelper {
         PlayerCard.getStyle().set("padding", "10px");
         PlayerCard.getStyle().set("background-color", "hsla(0, 0.00%, 0.00%, 0.05)");
         PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
-        PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
+        PlayerCard.getStyle().set("backdrop-filter", "blur(25px)");
         PlayerCard.setWidth("300px");
         PlayerCard.setHeight("450px");
 
@@ -69,7 +69,7 @@ public class QuartettHelper {
 
         cardFlipper.add(cardFaceFront, cardFaceBack);
         cardContainer.add(cardFlipper);
-        cardContainer.getStyle().set("backdrop-filter", "blur(40px)");
+        cardContainer.getStyle().set("backdrop-filter", "blur(25px)");
         cardContainer.setWidth("324px");
         cardContainer.getStyle().setBorderRadius("10px");
 
@@ -83,7 +83,7 @@ public class QuartettHelper {
         PlayerCard.getStyle().set("padding", "10px");
         PlayerCard.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
         PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
-        PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
+        PlayerCard.getStyle().set("backdrop-filter", "blur(25px)");
         PlayerCard.setWidth("300px");
         PlayerCard.setHeight("450px");
 

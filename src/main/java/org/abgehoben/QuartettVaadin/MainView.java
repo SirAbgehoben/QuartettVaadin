@@ -18,17 +18,26 @@ import com.vaadin.flow.server.VaadinSession;
 public class MainView extends VerticalLayout {
     public MainView(LoginService service) {
 
-        this.getStyle().set("background-image", "url(miku.png)");
+        this.getStyle().set("background-image", "url(mojave.svg)");
         this.getStyle().set("background-position", "center");
         this.getStyle().set("background-size", "cover");
         this.getStyle().set("background-repeat", "no-repeat").setHeight("100%");
 
+        Div backgroundBlur = new Div();
+        backgroundBlur.getStyle().set("backdrop-filter", "blur(15px)");
+        backgroundBlur.getStyle().set("position", "absolute");
+        backgroundBlur.getStyle().set("top", "0");
+        backgroundBlur.getStyle().set("left", "0");
+        backgroundBlur.getStyle().set("width", "100%");
+        backgroundBlur.getStyle().set("height", "100%");
+        this.add(backgroundBlur);
+
         Div container = new Div();
-        container.getStyle().set("background", "hsla(214, 10%, 6%, 0.8)");
+        container.getStyle().set("background", "hsla(214, 10%, 6%, 0.2)");
         container.getStyle().set("padding", "20px");
         container.getStyle().set("border-radius", "10px");
-        container.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
-        container.getStyle().set("backdrop-filter", "blur(20px)");
+        container.getStyle().set("box-shadow", "0 2px 6px rgba(0, 0, 0, 0.4)");
+        container.getStyle().set("backdrop-filter", "blur(40px)");
         container.getStyle().set("color", "hsla(214, 96%, 96%, 0.9)"); //global text color for container
 
         VaadinSession sessionId = VaadinSession.getCurrent();
@@ -39,7 +48,7 @@ public class MainView extends VerticalLayout {
         sessionInfo.getStyle().set("position", "absolute");
         sessionInfo.getStyle().set("bottom", "10px");
         sessionInfo.getStyle().set("left", "10px");
-        sessionInfo.getStyle().set("color", "hsla(214, 96%, 16%, 0.9)");
+        sessionInfo.getStyle().set("color", "hsla(214, 96%, 91%, 0.9)");
         sessionInfo.getStyle().set("font-size", "12px");
         this.add(sessionInfo);
 

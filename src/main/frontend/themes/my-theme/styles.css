@@ -59,4 +59,3 @@ vaadin-text-field.bordered::part(input-field) {
       backface-visibility: hidden;
       transform-style: preserve-3d;
 }
-
