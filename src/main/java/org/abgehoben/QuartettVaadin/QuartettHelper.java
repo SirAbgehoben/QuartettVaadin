@@ -16,7 +16,6 @@ public class QuartettHelper {
         PlayerCard.getStyle().set("border", "2px solid hsla(214, 64%, 82%, 0.23)");
         PlayerCard.getStyle().set("border-radius", "10px");
         PlayerCard.getStyle().set("padding", "10px");
-        PlayerCard.getStyle().set("margin", "10px");
         PlayerCard.getStyle().set("background-color", "hsla(0, 0.00%, 0.00%, 0.05)");
         PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
         PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
@@ -51,12 +50,37 @@ public class QuartettHelper {
         return PlayerCard;
     }
 
+    public static Div createOpponentCard(QuartettSession quartettSession, Player opponentPlayer, Player currentPlayer) {
+        Div cardContainer = new Div();
+        cardContainer.addClassName("card-container");
+
+        Div cardFlipper = new Div();
+        cardFlipper.addClassName("card-flipper");
+
+        Div cardFaceFront = new Div();
+        cardFaceFront.addClassName("card-face");
+        cardFaceFront.addClassName("card-face-front");
+        cardFaceFront.add(createOpponentBlankCard(opponentPlayer));
+
+        Div cardFaceBack = new Div();
+        cardFaceBack.addClassName("card-face");
+        cardFaceBack.addClassName("card-face-back");
+        cardFaceBack.add(createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"));
+
+        cardFlipper.add(cardFaceFront, cardFaceBack);
+        cardContainer.add(cardFlipper);
+        cardContainer.getStyle().set("backdrop-filter", "blur(40px)");
+        cardContainer.setWidth("324px");
+        cardContainer.getStyle().setBorderRadius("10px");
+
+        return cardContainer;
+    }
+
     public static Div createOpponentBlankCard(Player opponentPlayer) {
         Div PlayerCard = new Div();
         PlayerCard.getStyle().set("border", "2px solid hsla(214, 64%, 82%, 0.23)");
         PlayerCard.getStyle().set("border-radius", "10px");
         PlayerCard.getStyle().set("padding", "10px");
-        PlayerCard.getStyle().set("margin", "10px");
         PlayerCard.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
         PlayerCard.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)");
         PlayerCard.getStyle().set("backdrop-filter", "blur(40px)");
@@ -142,6 +166,11 @@ public class QuartettHelper {
         attributes.getStyle().setHeight("29px");
         attributeContent.add(attributeName, attributeValue);
         attributes.getStyle().setBorderRadius("4px");
+        //prevent text selection and dragging
+        attributes.getStyle().set("user-select", "none");
+        attributes.getStyle().set("-webkit-user-select", "none");
+        attributes.getStyle().set("-webkit-user-drag", "none");
+
 
 
         return attributes;
@@ -265,5 +294,19 @@ public class QuartettHelper {
         NameAndRole.add(PlayerRole);
 
         return NameAndRole;
+    }
+
+    public static Div AktivePlayerIndicator(QuartettSession quartettSession, Player AktivePlayer) {
+        Span Indicator = new Span(AktivePlayer.equals(quartettSession.getAktivePlayer()) ? "Your turn" : "Opponents turn");
+
+        Div AktivePlayerIndicator = new Div(Indicator);
+        AktivePlayerIndicator.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
+        AktivePlayerIndicator.getStyle().set("backdrop-filter", "blur(20px)");
+        AktivePlayerIndicator.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
+        AktivePlayerIndicator.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
+        AktivePlayerIndicator.getStyle().setHeight("29px");
+        AktivePlayerIndicator.getStyle().setWidth("100%");
+        AktivePlayerIndicator.getStyle().setBorderRadius("4px");
+        return AktivePlayerIndicator;
     }
 }

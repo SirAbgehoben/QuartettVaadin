@@ -16,4 +16,47 @@ vaadin-text-field.bordered::part(input-field) {
   background-color: var(--lumo-base-color);
 }
 
+/* styles.css */
+
+/* ... existing styles ... */
+
+.card-container {
+    perspective: 1000px; /* Required for 3D transforms */
+    width: 320px;
+    height: 100%;
+    position: center; /* Needed for absolute positioning of card faces */
+}
+
+.card-flipper {
+    transition: transform 0.8s; /* Animation speed */
+    transform-style: preserve-3d; /* Important for 3D transforms */
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Hide the back of the face during rotation */
+    border-radius: 10px;
+}
+
+.card-face-front {
+    z-index: 2; /* Ensure the front face is on top initially */
+}
+
+.card-face-back {
+    transform: rotateY(180deg); /* Initially hidden behind the front face */
+    z-index: 1; /* Ensure the back face is behind the front initially */
+}
+
+.card-flipped .card-flipper {
+    transform: rotateY(180deg); /* Flip the card */
+      -webkit-backface-visibility: hidden;
+      -moz-backface-visibility: hidden;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+}
 

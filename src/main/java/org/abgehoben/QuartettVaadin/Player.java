@@ -49,6 +49,14 @@ public class Player {
         }
     }
 
+    public void flipOpponentCard() {
+        UI ui = LoginService.getUIForSession(SessionId);
+        QuartettView quartettView = QuartettView.sessionViewMap.get(SessionId);
+        if (quartettView != null) {
+            ui.access(quartettView::flipOpponentCard);
+        }
+    }
+
     public void AddCardToDeck(Integer cardId) {
         Deck.add(cardId); //let's just try with index
     }

@@ -13,11 +13,14 @@ import com.vaadin.flow.server.VaadinSession;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Route("quartett")
 public class QuartettView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
 
     private HorizontalLayout playerCardLayout;
+    private Div opponentCardContainer;
 
 
     public static Map<VaadinSession, QuartettView> sessionViewMap = new HashMap<>();
@@ -84,9 +87,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         playerCardLayout.add(currentPlayerCard);
 
         // Create the opponent's card (on the right)
-        Div opponentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent");
-//        Div opponentPlayerCard = QuartettHelper.createOpponentBlankCard(opponentPlayer);
-        playerCardLayout.add(opponentPlayerCard);
+        opponentCardContainer = QuartettHelper.createOpponentCard(quartettSession, opponentPlayer, currentPlayer); // Store the container
+        playerCardLayout.add(opponentCardContainer);
         add(playerCardLayout);
     }
 
@@ -113,8 +115,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         Div newCurrentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
         playerCardLayout.add(newCurrentPlayerCard); //add new card
 
-        Div newOpponentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"); //create new card
-        playerCardLayout.add(newOpponentPlayerCard); //add new card
+        opponentCardContainer = QuartettHelper.createOpponentCard(quartettSession, opponentPlayer, currentPlayer); // Store the container
+        playerCardLayout.add(opponentCardContainer); //add new card
     }
 
     public void showTimeNotification() {
@@ -139,6 +141,26 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         }).start();
     }
 
+    public void flipOpponentCard() {
+        if (opponentCardContainer == null) return;
+
+        Div cardFlipper = (Div) opponentCardContainer.getChildren().findFirst().orElse(null);
+        if (cardFlipper == null) return;
+
+        opponentCardContainer.addClassName("card-flipped"); // Start the flip
+
+        UI currentUI = UI.getCurrent();
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                currentUI.access(() -> {
+                    opponentCardContainer.removeClassName("card-flipped"); // Reverse the flip
+                });
+            }
+        }, 5000); // 5 seconds
+    }
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {

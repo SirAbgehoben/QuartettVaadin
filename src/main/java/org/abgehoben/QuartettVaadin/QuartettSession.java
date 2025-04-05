@@ -54,9 +54,11 @@ public class QuartettSession {
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
-        //setAktivePlayer = winnerPlayer;
+
+        playerOne.flipOpponentCard();
+        playerTwo.flipOpponentCard();
+        setAktivePlayer(winnerPlayer);
         
-        //flip the opponent card
         scheduleNextCard();
     }
 
