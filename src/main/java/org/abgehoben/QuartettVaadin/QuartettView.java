@@ -1,13 +1,20 @@
 package org.abgehoben.QuartettVaadin;
 
 
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.DetachNotifier;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
@@ -17,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Route("quartett")
-public class QuartettView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver {
+public class QuartettView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver, DetachNotifier {
 
     private HorizontalLayout playerCardLayout;
     private Div opponentCardContainer;
@@ -55,6 +62,17 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         particleBackground.getStyle().setHeight("100%");
         particleBackground.getStyle().set("overflow", "hidden");
         add(particleBackground);
+
+        Button tertiaryButton = new Button(new Icon(VaadinIcon.SIGN_OUT));
+        tertiaryButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        tertiaryButton.getStyle().setPosition(Style.Position.ABSOLUTE);
+        tertiaryButton.getStyle().setTop("5px");
+        tertiaryButton.getStyle().setLeft("5px");
+        tertiaryButton.getStyle().set("cursor", "pointer");
+        tertiaryButton.getStyle().setColor("hsla(214, 78%, 88%, 0.5)");
+        tertiaryButton.addClickListener(event -> QuartettHelper.LeaveConfirmDialog(UI.getCurrent(), session).open());
+        this.add(tertiaryButton);
+
 
         Span sessionInfo = new Span("Session ID: " + session.getSession().getId() + ", UI ID: " + UI.getCurrent());
         sessionInfo.getStyle().set("position", "absolute");
@@ -182,5 +200,11 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         } else {
             System.out.println("Could not update UI map for session: " + session.getSession().getId() + " because UI is null");
         }
+    }
+
+    @Override
+    public void onDetach(DetachEvent event) {
+        //handle player alone in game
+        //TODO
     }
 }

@@ -1,13 +1,20 @@
 package org.abgehoben.QuartettVaadin;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.VaadinSession;
+
+import java.util.Objects;
 
 public class QuartettHelper {
 
@@ -89,14 +96,6 @@ public class QuartettHelper {
 
         HorizontalLayout NameAndRole = CreateNameAndRole(opponentPlayer, "Opponent");
         PlayerCard.add(NameAndRole);
-
-//        Image image = new Image("CardBack.svg", "Card Image");
-//        image.getStyle().set("display", "block");
-//        image.getStyle().set("margin-left", "auto");
-//        image.getStyle().set("object-fit", "cover");
-//        image.getStyle().setMarginTop("4px");
-//        image.getStyle().setMarginBottom("2px");
-//        PlayerCard.add(image);
 
         PlayerCard.getStyle().set("background-image", "url(CardBackLr.png)");
         PlayerCard.getStyle().set("background-size", "cover");
@@ -308,5 +307,38 @@ public class QuartettHelper {
         AktivePlayerIndicator.getStyle().setWidth("100%");
         AktivePlayerIndicator.getStyle().setBorderRadius("4px");
         return AktivePlayerIndicator;
+    }
+
+    public static ConfirmDialog LeaveConfirmDialog(UI ui, VaadinSession session) {
+
+        ui.getPage().addStyleSheet("themes/main/styles.css");
+
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.setHeader("Confirm Leave");
+        dialog.setText("Are you sure you want to leave the game?");
+
+
+        dialog.setCancelable(true);
+
+        dialog.setRejectable(false);
+
+        dialog.setConfirmText("Leave");
+        dialog.getElement().setAttribute("theme", "custom-confirm-dialog"); // Keep the theme attribute
+
+        dialog.addConfirmListener(event -> {
+            QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
+
+            Notification notification = new Notification();
+            notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
+            notification.add(new Text("Opponent left the game."));
+            notification.setDuration(5000);
+
+            QuartettService.leaveGame(session);
+
+            Objects.requireNonNull(quartettSession).getPlayers().forEach((playerSession, name) -> LoginService.getUIForSession(playerSession).access(notification::open));
+
+            ui.navigate("");
+        });
+        return dialog;
     }
 }

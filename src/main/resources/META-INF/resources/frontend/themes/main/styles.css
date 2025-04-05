@@ -1,0 +1,22 @@
+/* In frontend/themes/main/styles.css */
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"]::part(overlay) {
+    background-color: hsla(214, 10%, 6%, 0.8); /* Removed !important */
+}
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"]::part(header){
+    background-color: hsla(214, 10%, 6%, 0.8);
+}
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"]::part(content){
+    background-color: hsla(214, 10%, 6%, 0.8);
+}
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"]::part(footer){
+    background-color: hsla(214, 10%, 6%, 0.8);
+}
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"]::part(message){
+    color: hsla(214, 96%, 91%, 0.9);
+}
+vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"] > [slot="header"] {
+    color: hsla(214, 96%, 91%, 0.9);
+}
+vaadin-confirm-dialog-overlay::part(backdrop) {
+    backdrop-filter: blur(5px);
+}

@@ -47,6 +47,7 @@ public class QuartettService {
     }
     public static void leaveGame(VaadinSession session) {
         QuartettSession quartettSession = getQuartettSessionForPlayer(session);
+        System.out.println("Player "+ LoginService.usersInGame.get(session) + " left the game");
 
         if (quartettSession == null) {
             return;
@@ -56,6 +57,7 @@ public class QuartettService {
             endGame(quartettSession);
         } else if (quartettSession.getPlayers().containsKey(session)) {
             quartettSession.removePlayer(session);
+            LoginService.usersInGame.remove(session);
         }
     }
 
