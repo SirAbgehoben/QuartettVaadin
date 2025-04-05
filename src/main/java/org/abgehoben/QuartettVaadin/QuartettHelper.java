@@ -317,7 +317,6 @@ public class QuartettHelper {
         dialog.setHeader("Confirm Leave");
         dialog.setText("Are you sure you want to leave the game?");
 
-
         dialog.setCancelable(true);
 
         dialog.setRejectable(false);

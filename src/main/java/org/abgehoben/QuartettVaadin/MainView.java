@@ -52,8 +52,6 @@ public class MainView extends VerticalLayout {
         sessionInfo.getStyle().set("font-size", "12px");
         this.add(sessionInfo);
 
-
-
         TextField textField = new TextField("Your Nickname");
         textField.getElement().getStyle().set("--vaadin-input-field-label-color", "hsla(214, 69%, 84%, 0.32)"); //kinda sounds like limbo IDK
         textField.getElement().getStyle().set("--vaadin-input-field-focused-label-color", "hsla(205, 90%, 48%, 0.80)");
