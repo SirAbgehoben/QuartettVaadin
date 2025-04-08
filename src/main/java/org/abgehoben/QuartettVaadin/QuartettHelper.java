@@ -295,18 +295,21 @@ public class QuartettHelper {
         return NameAndRole;
     }
 
-    public static Div AktivePlayerIndicator(QuartettSession quartettSession, Player AktivePlayer) {
-        Span Indicator = new Span(AktivePlayer.equals(quartettSession.getAktivePlayer()) ? "Your turn" : "Opponents turn");
+    public static Div ActivePlayerIndicator(QuartettSession quartettSession, Player ThisPlayer) {
+        Span Indicator = new Span(ThisPlayer.equals(quartettSession.getAktivePlayer()) ? "Your turn" : "Opponents turn");
 
-        Div AktivePlayerIndicator = new Div(Indicator);
-        AktivePlayerIndicator.getStyle().set("background-color", "hsla(214, 10%, 0%, 0.1)");
-        AktivePlayerIndicator.getStyle().set("backdrop-filter", "blur(20px)");
-        AktivePlayerIndicator.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
-        AktivePlayerIndicator.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
-        AktivePlayerIndicator.getStyle().setHeight("29px");
-        AktivePlayerIndicator.getStyle().setWidth("100%");
-        AktivePlayerIndicator.getStyle().setBorderRadius("4px");
-        return AktivePlayerIndicator;
+        Div ActivePlayerIndicator = new Div(Indicator);
+        ActivePlayerIndicator.getStyle().set("width", "300px");
+        ActivePlayerIndicator.getStyle().set("height", "5px");
+        ActivePlayerIndicator.getStyle().setBorderRadius("4px");
+        ActivePlayerIndicator.getStyle().set("background-color", ThisPlayer.equals(quartettSession.getAktivePlayer()) ? "green" : "red");
+        ActivePlayerIndicator.getStyle().set("position", "absolute");
+        ActivePlayerIndicator.getStyle().set("bottom", "calc(50% - 250px)");
+        ActivePlayerIndicator.getStyle().set("left", "50%");
+        ActivePlayerIndicator.getStyle().set("transform", "translateX(-50%)");
+        ActivePlayerIndicator.getStyle().set("transition", "left 0.5s ease-in-out");
+        ActivePlayerIndicator.getStyle().setZIndex(1);
+        return ActivePlayerIndicator;
     }
 
     public static ConfirmDialog LeaveConfirmDialog(UI ui, VaadinSession session) {

@@ -18,16 +18,14 @@ import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Route("quartett")
 public class QuartettView extends VerticalLayout implements BeforeEnterObserver, AfterNavigationObserver, DetachNotifier {
 
     private HorizontalLayout playerCardLayout;
     private Div opponentCardContainer;
+    private Div ActivePlayerIndicator;
 
 
     public static Map<VaadinSession, QuartettView> sessionViewMap = new HashMap<>();
@@ -108,6 +106,10 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         opponentCardContainer = QuartettHelper.createOpponentCard(quartettSession, opponentPlayer, currentPlayer); // Store the container
         playerCardLayout.add(opponentCardContainer);
         add(playerCardLayout);
+
+        ActivePlayerIndicator = QuartettHelper.ActivePlayerIndicator(quartettSession, currentPlayer);
+        add(ActivePlayerIndicator);
+        updateActivePlayerIndicator(currentPlayer);
     }
 
     public void updatePlayerCards() {
@@ -178,6 +180,28 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
                 });
             }
         }, 5000); // 5 seconds
+    }
+
+    public void updateActivePlayerIndicator(Player player) {
+        VaadinSession session = VaadinSession.getCurrent();
+        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
+
+        UI.getCurrent().access(() -> {
+            remove(ActivePlayerIndicator);
+            ActivePlayerIndicator = QuartettHelper.ActivePlayerIndicator(Objects.requireNonNull(quartettSession), player);
+            add(ActivePlayerIndicator);
+
+            // Calculate the position based on the target card
+            if (quartettSession.getAktivePlayer().equals(player)) {
+                // Position above the current player's card
+                ActivePlayerIndicator.getStyle().set("left", "calc(50% - 320px)"); // Adjust as needed
+                ActivePlayerIndicator.getStyle().set("transform", "translateX(0%)");
+            } else {
+                // Position above the opponent's card
+                ActivePlayerIndicator.getStyle().set("left", "calc(50% + 20px)");
+                ActivePlayerIndicator.getStyle().set("transform", "translateX(0%)");
+            }
+        });
     }
 
     @Override

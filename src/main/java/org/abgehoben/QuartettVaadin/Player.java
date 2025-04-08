@@ -57,6 +57,14 @@ public class Player {
         }
     }
 
+    public void updateActivePlayerIndicator() {
+        UI ui = LoginService.getUIForSession(SessionId);
+        QuartettView quartettView = QuartettView.sessionViewMap.get(SessionId);
+        if (quartettView != null) {
+            ui.access(() -> quartettView.updateActivePlayerIndicator(this)); //this takes a Player object
+        }
+    }
+
     public void AddCardToDeck(Integer cardId) {
         Deck.add(cardId); //let's just try with index
     }

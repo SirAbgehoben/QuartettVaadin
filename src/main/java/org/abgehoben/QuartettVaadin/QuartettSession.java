@@ -41,6 +41,8 @@ public class QuartettSession {
         playerTwo.setSessionId(userSessionsInSession.get(1));
         playerOne.setNextCard();
         playerTwo.setNextCard();
+        playerOne.updateActivePlayerIndicator();
+        playerTwo.updateActivePlayerIndicator();
         System.out.println("Initialized players: " + playerOne.getSessionId() + " and " + playerTwo.getSessionId());
 
         System.out.println("Initialized players: " + playerOne.getName() + " and " + playerTwo.getName());
@@ -72,6 +74,8 @@ public class QuartettSession {
 
                 playerOne.UpdateCardDisplay();
                 playerTwo.UpdateCardDisplay();
+                playerOne.updateActivePlayerIndicator();
+                playerTwo.updateActivePlayerIndicator();
                 AlreadyClicked = false;
                 //flip the opponent card back
                 timer.cancel(); // Stop the timer after execution
