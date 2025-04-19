@@ -187,20 +187,24 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
 
         UI.getCurrent().access(() -> {
-            remove(ActivePlayerIndicator);
-            ActivePlayerIndicator = QuartettHelper.ActivePlayerIndicator(Objects.requireNonNull(quartettSession), player);
-            add(ActivePlayerIndicator);
+            // Update the indicator text (assuming it's the first child)
+            if (ActivePlayerIndicator.getElement().getChildCount() > 0) {
+                ActivePlayerIndicator.getElement().getChild(0)
+                        .setText(Objects.requireNonNull(quartettSession).getAktivePlayer().equals(player) ? "Your turn" : "Opponents turn");
+            }
+            // Update background color
+            ActivePlayerIndicator.getStyle().set("background-color", Objects.requireNonNull(quartettSession).getAktivePlayer().equals(player) ? "green" : "red");
 
-            // Calculate the position based on the target card
+            // Update position
             if (quartettSession.getAktivePlayer().equals(player)) {
-                // Position above the current player's card
-                ActivePlayerIndicator.getStyle().set("left", "calc(50% - 320px)"); // Adjust as needed
+                ActivePlayerIndicator.getStyle().set("left", "calc(50% - 320px)");
                 ActivePlayerIndicator.getStyle().set("transform", "translateX(0%)");
             } else {
-                // Position above the opponent's card
                 ActivePlayerIndicator.getStyle().set("left", "calc(50% + 20px)");
                 ActivePlayerIndicator.getStyle().set("transform", "translateX(0%)");
             }
+            // Optionally update transition if needed
+            ActivePlayerIndicator.getStyle().set("transition", "left 0.5s ease, transform 0.5s ease");
         });
     }
 
