@@ -12,6 +12,7 @@ public class Player {
     private VaadinSession SessionId;
     private final ArrayList<Integer> Deck;
     public Card card;
+    private String LastClickedAttribute;
 
     public Player(ArrayList<Integer> Deck) {
         this.Deck = Deck;
@@ -65,6 +66,14 @@ public class Player {
         }
     }
 
+    public void addOpponentCardInfo(QuartettSession quartettSession) {
+        UI ui = LoginService.getUIForSession(SessionId);
+        QuartettView quartettView = QuartettView.sessionViewMap.get(SessionId);
+        if (quartettView != null) {
+            ui.access(() -> quartettView.addOpponentCardInfo(quartettSession));
+        }
+    }
+
     public void AddCardToDeck(Integer cardId) {
         Deck.add(cardId); //let's just try with index
     }
@@ -79,5 +88,13 @@ public class Player {
 
     public Integer getCardsLeft() {
         return Deck.size();
+    }
+
+    public String getLastClickedAttribute() {
+        System.out.println("LastClickedAttribute: " + LastClickedAttribute);
+        return LastClickedAttribute;
+    }
+    public void setLastClickedAttribute(String attribute) {
+        LastClickedAttribute = attribute;
     }
 }

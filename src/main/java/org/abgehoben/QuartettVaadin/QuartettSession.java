@@ -57,18 +57,22 @@ public class QuartettSession {
 
         System.out.println("Player " + winnerPlayer.getName() + " won the round");
 
+        playerOne.addOpponentCardInfo(this);
+        playerTwo.addOpponentCardInfo(this);
+
         playerOne.flipOpponentCard();
         playerTwo.flipOpponentCard();
-        setAktivePlayer(winnerPlayer);
         
-        scheduleNextCard();
+        scheduleNextCard(winnerPlayer);
     }
 
-    private void scheduleNextCard() {
+    private void scheduleNextCard(Player winnerPlayer) {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                setAktivePlayer(winnerPlayer);
+
                 playerOne.setNextCard();
                 playerTwo.setNextCard();
 
@@ -113,6 +117,7 @@ public class QuartettSession {
         AlreadyClicked = true;
         Float clickedAttributeValue = playerClicker.card.get(attribute);
         Float opponentAttributeValue = Opponent.card.get(attribute);
+        playerClicker.setLastClickedAttribute(attribute);
 
         //Smaller == better
         boolean GameResult;

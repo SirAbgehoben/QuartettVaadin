@@ -43,11 +43,11 @@ public class QuartettHelper {
                 VerticalLayout playerButtons = createPlayerButtons(quartettSession, currentPlayer, opponentPlayer, card);
                 PlayerCard.add(playerButtons);
             } else {
-                VerticalLayout attributesLayout = createPlayerAttributesSpan(card);
+                VerticalLayout attributesLayout = createPlayerAttributesLayout(card, null);
                 PlayerCard.add(attributesLayout);
             }
         } else {
-            VerticalLayout attributesLayout = createPlayerAttributesSpan(card);
+            VerticalLayout attributesLayout = createPlayerAttributesLayout(card, quartettSession.getAktivePlayer().getLastClickedAttribute()); //Opponent attributes
             PlayerCard.add(attributesLayout);
         }
 
@@ -57,7 +57,7 @@ public class QuartettHelper {
         return PlayerCard;
     }
 
-    public static Div createOpponentCard(QuartettSession quartettSession, Player opponentPlayer, Player currentPlayer) {
+    public static Div createOpponentCard(Player opponentPlayer) {
         Div cardContainer = new Div();
         cardContainer.addClassName("card-container");
 
@@ -69,12 +69,7 @@ public class QuartettHelper {
         cardFaceFront.addClassName("card-face-front");
         cardFaceFront.add(createOpponentBlankCard(opponentPlayer));
 
-        Div cardFaceBack = new Div();
-        cardFaceBack.addClassName("card-face");
-        cardFaceBack.addClassName("card-face-back");
-        cardFaceBack.add(createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent"));
-
-        cardFlipper.add(cardFaceFront, cardFaceBack);
+        cardFlipper.add(cardFaceFront);
         cardContainer.add(cardFlipper);
         cardContainer.getStyle().set("backdrop-filter", "blur(25px)");
         cardContainer.setWidth("324px");
@@ -123,10 +118,14 @@ public class QuartettHelper {
         return CardsLeft;
     }
 
-    public static VerticalLayout createPlayerAttributesSpan(Card card) {
+    public static VerticalLayout createPlayerAttributesLayout(Card card, String LastClickedAttribute) {
         VerticalLayout attributesLayout = new VerticalLayout();
         for (String attribute : card.getAttributes().keySet()) {
             Div attributeDiv = CreateAttributeDiv(card, attribute);
+
+            if (attribute.equals(LastClickedAttribute)) {
+                attributeDiv.getStyle().setBackground("hsla(214, 78%, 88%, 0.5)");
+            }
             attributesLayout.add(attributeDiv);
         }
         attributesLayout.setSpacing(false);
@@ -155,6 +154,8 @@ public class QuartettHelper {
         attributeValue.getStyle().set("text-align", "right");
         attributeValue.setWidth("50%");
 
+        attributeContent.add(attributeName, attributeValue);
+
         Div attributes = new Div(attributeContent);
         attributes.setWidthFull();
         attributes.getStyle().set("color", "white");
@@ -163,14 +164,11 @@ public class QuartettHelper {
         attributes.getStyle().setBorder("0.5px solid rgba(40, 44, 26, 0.3)");
         attributes.getStyle().setBoxShadow("0 4px 6px rgba(0, 0, 0, 0.1)");
         attributes.getStyle().setHeight("29px");
-        attributeContent.add(attributeName, attributeValue);
         attributes.getStyle().setBorderRadius("4px");
         //prevent text selection and dragging
         attributes.getStyle().set("user-select", "none");
         attributes.getStyle().set("-webkit-user-select", "none");
         attributes.getStyle().set("-webkit-user-drag", "none");
-
-
 
         return attributes;
     }
@@ -189,12 +187,14 @@ public class QuartettHelper {
                     if (component instanceof Button) {((Button) component).setEnabled(false);}
                 });
                 if (quartettSession.AlreadyClicked) {return;}
+
                 boolean playerWon = quartettSession.onButtonClick(attribute, currentPlayer, opponentPlayer);
                 if (playerWon) {
                     attributeButton.getStyle().set("background-color", "green");
                 } else {
                     attributeButton.getStyle().set("background-color", "red");
                 }
+
                 quartettSession.getPlayers().forEach((session, name) -> {
                     UI ui = LoginService.getUIForSession(session);
                     QuartettView quartettView = QuartettView.sessionViewMap.get(session);

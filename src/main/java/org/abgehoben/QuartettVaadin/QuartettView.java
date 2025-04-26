@@ -27,6 +27,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
     private Div opponentCardContainer;
     private Div ActivePlayerIndicator;
 
+    private Player currentPlayer;
+    private Player opponentPlayer;
 
     public static Map<VaadinSession, QuartettView> sessionViewMap = new HashMap<>();
 
@@ -88,8 +90,6 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
         // Determine which player is the current user and which is the opponent
         VaadinSession currentSession = VaadinSession.getCurrent();
-        Player currentPlayer;
-        Player opponentPlayer;
         if (quartettSession.playerOne.getSessionId().getSession().getId().equals(currentSession.getSession().getId())) {
             currentPlayer = quartettSession.playerOne;
             opponentPlayer = quartettSession.playerTwo;
@@ -103,7 +103,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         playerCardLayout.add(currentPlayerCard);
 
         // Create the opponent's card (on the right)
-        opponentCardContainer = QuartettHelper.createOpponentCard(quartettSession, opponentPlayer, currentPlayer); // Store the container
+        opponentCardContainer = QuartettHelper.createOpponentCard(opponentPlayer); // Store the container
         playerCardLayout.add(opponentCardContainer);
         add(playerCardLayout);
 
@@ -135,7 +135,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         Div newCurrentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
         playerCardLayout.add(newCurrentPlayerCard); //add new card
 
-        opponentCardContainer = QuartettHelper.createOpponentCard(quartettSession, opponentPlayer, currentPlayer); // Store the container
+        opponentCardContainer = QuartettHelper.createOpponentCard(opponentPlayer); // Store the container
         playerCardLayout.add(opponentCardContainer); //add new card
     }
 
@@ -187,7 +187,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
 
         UI.getCurrent().access(() -> {
-            // Update the indicator text (assuming it's the first child)
+            // Update the indicator text (it's the first child)
             if (ActivePlayerIndicator.getElement().getChildCount() > 0) {
                 ActivePlayerIndicator.getElement().getChild(0)
                         .setText(Objects.requireNonNull(quartettSession).getAktivePlayer().equals(player) ? "Your turn" : "Opponents turn");
@@ -203,9 +203,18 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
                 ActivePlayerIndicator.getStyle().set("left", "calc(50% + 20px)");
                 ActivePlayerIndicator.getStyle().set("transform", "translateX(0%)");
             }
-            // Optionally update transition if needed
             ActivePlayerIndicator.getStyle().set("transition", "left 0.5s ease, transform 0.5s ease");
         });
+    }
+
+    public void addOpponentCardInfo(QuartettSession quartettSession) {
+        Div cardFlipper = (Div) opponentCardContainer.getChildren().findFirst().orElse(null);
+
+        Div cardFaceBack = new Div();
+        cardFaceBack.addClassName("card-face");
+        cardFaceBack.addClassName("card-face-back");
+        cardFaceBack.add(QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent")); //currentPlayer is the cardOwner
+        Objects.requireNonNull(cardFlipper).add(cardFaceBack);
     }
 
     @Override
