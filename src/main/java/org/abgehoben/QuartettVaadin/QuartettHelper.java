@@ -1,12 +1,15 @@
 package org.abgehoben.QuartettVaadin;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -342,5 +345,97 @@ public class QuartettHelper {
             ui.navigate("");
         });
         return dialog;
+    }
+
+    public static Div createGameEndDisplay(QuartettSession quartettSession, Player CurrentPlayer, Player OpponentPlayer, UI ui) {
+        VaadinSession session = CurrentPlayer.getSessionId();
+
+        Span GameResult = new Span(CurrentPlayer.equals(quartettSession.getWinner()) ? "You won" : "You lost");
+        GameResult.getStyle().set("font-family", "'Segoe UI', 'Dancing Script'")
+                .setFontSize("56px")
+                .setFontWeight("bold")
+                .setBackground("linear-gradient(to left, rgba(255,0,0,0), " + (CurrentPlayer.equals(quartettSession.getWinner()) ? "hsla(115, 100%, 50%, 0.77)" : "hsla(0, 100%, 50%, 0.77)"))
+                .setColor("white")
+                .setPaddingLeft("32px").setPaddingRight("32px")
+                .setBorderRadius("10px")
+                .setWidth("460px");
+
+        VerticalLayout PlayersLayout = new VerticalLayout();
+        PlayersLayout.setPadding(false);
+        PlayersLayout.setSpacing(false);
+        PlayersLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        PlayersLayout.add(new Span(CurrentPlayer.getName()));
+        PlayersLayout.add(new Icon("lumo:cross"));
+        PlayersLayout.add(new Span(OpponentPlayer.getName()));
+        PlayersLayout.setHeight("82px");
+
+        HorizontalLayout gameEndHeader = new HorizontalLayout(GameResult, PlayersLayout);
+        gameEndHeader.setPadding(false);
+        gameEndHeader.setSpacing(false);
+        gameEndHeader.setHeight("92px");
+
+        Span kurth = new Span();
+        if(CurrentPlayer.getName().equals("Kurth")) {
+            kurth.add("Skill Issue");
+        }
+
+        HorizontalLayout gameEndContent = new HorizontalLayout(kurth);
+        gameEndContent.setHeight("320px");
+        gameEndContent.setWidthFull();
+        gameEndContent.setPadding(false);
+
+        Button LeaveButton = new Button("Leave");
+        LeaveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        LeaveButton.addClickShortcut(Key.ENTER);
+        LeaveButton.getStyle().set("height", "34px");
+        LeaveButton.getStyle().set("background", "rgba(14, 16, 17, 0.2)");
+        LeaveButton.getStyle().set("backdrop-filter", "blur(10px)");
+        LeaveButton.getStyle().set("border", "1px solid rgba(40, 44, 46, 0.3)");
+        LeaveButton.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
+        LeaveButton.getStyle().set("transition", "all 0.3s ease");
+        LeaveButton.getStyle().set("cursor", "pointer");
+        LeaveButton.addClickListener((e) -> {
+            QuartettService.leaveGame(session);
+            ui.navigate("");
+        });
+
+        Button PlayAgainButton = new Button("Play Again");
+        PlayAgainButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        PlayAgainButton.addClickShortcut(Key.ENTER);
+        PlayAgainButton.getStyle().set("height", "34px");
+        PlayAgainButton.getStyle().set("background", "rgba(14, 16, 17, 0.2)");
+        PlayAgainButton.getStyle().set("backdrop-filter", "blur(10px)");
+        PlayAgainButton.getStyle().set("border", "1px solid rgba(40, 44, 46, 0.3)");
+        PlayAgainButton.getStyle().set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
+        PlayAgainButton.getStyle().set("transition", "all 0.3s ease");
+        PlayAgainButton.getStyle().set("cursor", "pointer");
+        PlayAgainButton.addClickListener((e) -> quartettSession.playAgain(CurrentPlayer, OpponentPlayer));
+
+        HorizontalLayout gameEndBottom = new HorizontalLayout(LeaveButton, PlayAgainButton);
+        gameEndBottom.setWidthFull();
+        gameEndBottom.setPadding(false);
+
+        Div spinner = new Div();
+        spinner.addClassName("lds-ripple");
+        spinner.getStyle().setHeight("34px");
+        spinner.getStyle().setWidth("112px");
+        spinner.add(new Div(), new Div());
+        spinner.getStyle().setPaddingLeft("12px");
+        spinner.getStyle().setMarginLeft("12px");
+        spinner.getStyle().setMarginBottom("2px");
+
+        PlayAgainButton.addClickListener((e) -> gameEndBottom.replace(PlayAgainButton, spinner));
+
+        Div gameEndDisplay = new Div(gameEndHeader,gameEndContent, gameEndBottom);
+        gameEndDisplay.getStyle().set("border", "2px solid hsla(214, 64%, 82%, 0.23)")
+                .set("border-radius", "10px")
+                .set("padding", "10px")
+                .set("background-color", "hsla(214, 10%, 0%, 0.1)")
+                .set("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.15)")
+                .set("backdrop-filter", "blur(25px)");
+        gameEndDisplay.setWidth("620px");
+        gameEndDisplay.setHeight("450px");
+
+        return gameEndDisplay;
     }
 }

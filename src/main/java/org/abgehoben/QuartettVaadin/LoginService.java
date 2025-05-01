@@ -15,10 +15,10 @@ public class LoginService implements Serializable {
     public static Map<VaadinSession, String> usersInGame = new ConcurrentHashMap<>();
     public static Map<VaadinSession, UI> sessionUIMap = new ConcurrentHashMap<>();
 
-    public String greet(String name, VaadinSession sessionId) {
+    public static String greet(String name, VaadinSession sessionId) {
         if (usersInGame.containsKey(sessionId)) {
-        QuartettService.joinGame(sessionId);
-        return "already in game";
+            QuartettService.joinGame(sessionId);
+            return "already in game";
         }
         if (name == null || name.isEmpty()) {
             return "name cannot be empty";
@@ -39,7 +39,8 @@ public class LoginService implements Serializable {
                 usersInGame.put(session, usersInQueue.get(session));
             }
 
-            QuartettService.startNewGame();
+            QuartettService.startNewGame(usersInQueue);
+            usersInQueue.clear();
             return "Game Started";
         } else {
             return "Joined Queue";

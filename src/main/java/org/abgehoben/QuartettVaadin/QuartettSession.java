@@ -1,11 +1,11 @@
 package org.abgehoben.QuartettVaadin;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.server.VaadinSession;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class QuartettSession {
 
@@ -18,6 +18,8 @@ public class QuartettSession {
     public Player playerOne;
     public Player playerTwo;
     private Player AktivePlayer;
+    public boolean GameEnded = false;
+    private Player GlobalWinnerPlayer;
 
     public QuartettSession(int id, ArrayList<ArrayList<Integer>> decks) {
         this.id = id;
@@ -51,7 +53,7 @@ public class QuartettSession {
     public void NextRound(Player looserPlayer, Player winnerPlayer) {
         Integer cardOfLostPlayer = looserPlayer.card.getId();//get player card id of lost player
         winnerPlayer.AddCardToDeck(cardOfLostPlayer);//add card id to playerDeck of player who won at the back of the deck
-        looserPlayer.RemoveCardFromDeck(cardOfLostPlayer);//next card for player who lost the round (remove current card from deck)
+        looserPlayer.RemoveCardFromDeck(cardOfLostPlayer);//next card for the player who lost the round (remove current card from deck)
 
         winnerPlayer.MoveFirstCardToBackOfDeck();//next card of player who won the round //cards get moved to the back of the deck
 
@@ -62,8 +64,30 @@ public class QuartettSession {
 
         playerOne.flipOpponentCard();
         playerTwo.flipOpponentCard();
-        
+
+        if(looserPlayer.getCardsLeft() < 1) {
+            System.out.println("Player " + looserPlayer.getName() + " has no cards left");
+            scheduleEndOfGame(winnerPlayer);
+            return;
+        }
+
         scheduleNextCard(winnerPlayer);
+    }
+
+    private void scheduleEndOfGame(Player winnerPlayer) {
+        GlobalWinnerPlayer = winnerPlayer;
+        GameEnded = true;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                playerOne.showGameEndDisplay();
+                playerTwo.showGameEndDisplay();
+
+
+                timer.cancel(); // Stop the timer after execution
+            }
+        }, 4000);
     }
 
     private void scheduleNextCard(Player winnerPlayer) {
@@ -110,6 +134,9 @@ public class QuartettSession {
     public void setAktivePlayer(Player aktivePlayer) {
         AktivePlayer = aktivePlayer;
     }
+    public Player getWinner() {
+        return GlobalWinnerPlayer;
+    }
 
     public Boolean AlreadyClicked = false;
 
@@ -139,5 +166,46 @@ public class QuartettSession {
             }
         }
         return GameResult;
+    }
+
+    public void playAgain(Player currentPlayer, Player OtherPlayer) {
+        currentPlayer.clickedPlayAgain = true;
+        if(usersInSession.size() < 2) {
+            QuartettService.leaveGame(currentPlayer.getSessionId());
+            String greeting = LoginService.greet(currentPlayer.getName(), currentPlayer.getSessionId());
+            if (greeting.equals("Joined Queue") || greeting.equals("already in Queue") || greeting.equals("already in Game")) {
+
+                Notification notification = new Notification(greeting, 4000);
+                if (greeting.equals("Joined Queue")) {
+                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                }
+
+                if (greeting.equals("already in Queue") || greeting.equals("already in Game")) {
+                    notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
+                }
+
+                UI ui = LoginService.getUIForSession(currentPlayer.getSessionId());
+                ui.access(notification::open);
+            }
+        } else {
+            if(OtherPlayer.clickedPlayAgain) {
+                QuartettService.startNewGame(usersInSession);
+                QuartettService.endGame(this);
+            } else {
+                //wait for the other player
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (OtherPlayer.clickedPlayAgain) {
+                            timer.cancel(); // Stop the timer after execution
+                            return;
+                        }
+                        QuartettService.leaveGame(currentPlayer.getSessionId());
+                        LoginService.greet(currentPlayer.getName(), currentPlayer.getSessionId());
+                    }
+                }, 15000);
+            }
+        }
     }
 }

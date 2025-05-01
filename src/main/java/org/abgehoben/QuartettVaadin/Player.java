@@ -13,6 +13,7 @@ public class Player {
     private final ArrayList<Integer> Deck;
     public Card card;
     private String LastClickedAttribute;
+    public Boolean clickedPlayAgain = false;
 
     public Player(ArrayList<Integer> Deck) {
         this.Deck = Deck;
@@ -75,7 +76,7 @@ public class Player {
     }
 
     public void AddCardToDeck(Integer cardId) {
-        Deck.add(cardId); //let's just try with index
+        Deck.add(cardId);
     }
     public void RemoveCardFromDeck(Integer cardId) {
         Deck.remove(cardId);
@@ -91,10 +92,17 @@ public class Player {
     }
 
     public String getLastClickedAttribute() {
-        System.out.println("LastClickedAttribute: " + LastClickedAttribute);
         return LastClickedAttribute;
     }
     public void setLastClickedAttribute(String attribute) {
         LastClickedAttribute = attribute;
+    }
+
+    public void showGameEndDisplay() {
+        UI ui = LoginService.getUIForSession(SessionId);
+        QuartettView quartettView = QuartettView.sessionViewMap.get(SessionId);
+        if (quartettView != null) {
+            ui.access(quartettView::showGameEndDisplay);
+        }
     }
 }

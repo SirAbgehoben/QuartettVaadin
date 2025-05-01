@@ -37,7 +37,7 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
 
         if (UI.getCurrent() == null) {
-            UI.setCurrent(LoginService.getUIForSession(session)); //Okay, so with this the particles work, at least for the user that pressed the button in MainView and started the session, but the particles-config isn't loaded and redirects back to main view do not work.
+            UI.setCurrent(LoginService.getUIForSession(session));
         }
 
         if (quartettSession == null) {
@@ -82,12 +82,6 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         sessionInfo.getStyle().set("font-size", "12px");
         this.add(sessionInfo);
 
-        // Create a horizontal layout to hold the player cards
-        playerCardLayout = new HorizontalLayout();
-        playerCardLayout.setWidthFull();
-        playerCardLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        playerCardLayout.setAlignItems(Alignment.CENTER);
-
         // Determine which player is the current user and which is the opponent
         VaadinSession currentSession = VaadinSession.getCurrent();
         if (quartettSession.playerOne.getSessionId().getSession().getId().equals(currentSession.getSession().getId())) {
@@ -97,6 +91,17 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
             currentPlayer = quartettSession.playerTwo;
             opponentPlayer = quartettSession.playerOne;
         }
+
+        if(quartettSession.GameEnded) {
+            this.add(QuartettHelper.createGameEndDisplay(quartettSession, currentPlayer, opponentPlayer, UI.getCurrent()));
+            return;
+        }
+
+        // Create a horizontal layout to hold the player cards
+        playerCardLayout = new HorizontalLayout();
+        playerCardLayout.setWidthFull();
+        playerCardLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        playerCardLayout.setAlignItems(Alignment.CENTER);
 
         // Create the current player's card (on the left)
         Div currentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You");
@@ -132,11 +137,11 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
         }
 
         playerCardLayout.removeAll();
-        Div newCurrentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create new card
-        playerCardLayout.add(newCurrentPlayerCard); //add new card
+        Div newCurrentPlayerCard = QuartettHelper.createPlayerCard(quartettSession, currentPlayer, opponentPlayer, currentPlayer.card, "You"); //create a new card
+        playerCardLayout.add(newCurrentPlayerCard); //add a new card
 
         opponentCardContainer = QuartettHelper.createOpponentCard(opponentPlayer); // Store the container
-        playerCardLayout.add(opponentCardContainer); //add new card
+        playerCardLayout.add(opponentCardContainer); //add a new card
     }
 
     public void showTimeNotification() {
@@ -208,13 +213,25 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
     }
 
     public void addOpponentCardInfo(QuartettSession quartettSession) {
-        Div cardFlipper = (Div) opponentCardContainer.getChildren().findFirst().orElse(null);
+        UI.getCurrent().access(() -> {
+            Div cardFlipper = (Div) opponentCardContainer.getChildren().findFirst().orElse(null);
 
-        Div cardFaceBack = new Div();
-        cardFaceBack.addClassName("card-face");
-        cardFaceBack.addClassName("card-face-back");
-        cardFaceBack.add(QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent")); //currentPlayer is the cardOwner
-        Objects.requireNonNull(cardFlipper).add(cardFaceBack);
+            Div cardFaceBack = new Div();
+            cardFaceBack.addClassName("card-face");
+            cardFaceBack.addClassName("card-face-back");
+            cardFaceBack.add(QuartettHelper.createPlayerCard(quartettSession, opponentPlayer, currentPlayer, opponentPlayer.card, "Opponent")); //currentPlayer is the cardOwner
+            Objects.requireNonNull(cardFlipper).add(cardFaceBack);
+        });
+    }
+
+    public void showGameEndDisplay() {
+        VaadinSession session = VaadinSession.getCurrent();
+        QuartettSession quartettSession = QuartettService.getQuartettSessionForPlayer(session);
+        UI.getCurrent().access(() -> {
+            this.remove(Objects.requireNonNull(playerCardLayout));
+            this.remove(Objects.requireNonNull(ActivePlayerIndicator));
+            this.add(QuartettHelper.createGameEndDisplay(Objects.requireNonNull(quartettSession), currentPlayer, opponentPlayer, UI.getCurrent()));
+        });
     }
 
     @Override
@@ -241,6 +258,8 @@ public class QuartettView extends VerticalLayout implements BeforeEnterObserver,
 
     @Override
     public void onDetach(DetachEvent event) {
+        VaadinSession session = VaadinSession.getCurrent();
+        sessionViewMap.remove(session, this);
         //handle player alone in game
         //TODO
     }

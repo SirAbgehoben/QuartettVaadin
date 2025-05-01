@@ -16,7 +16,7 @@ import com.vaadin.flow.server.VaadinSession;
 
 @Route
 public class MainView extends VerticalLayout {
-    public MainView(LoginService service) {
+    public MainView() {
 
         this.getStyle().set("background-image", "url(mojave.svg)");
         this.getStyle().set("background-position", "center");
@@ -68,7 +68,7 @@ public class MainView extends VerticalLayout {
 
 
         button.addClickListener((e) -> {
-            String greeting = service.greet(textField.getValue(), sessionId);
+            String greeting = LoginService.greet(textField.getValue(), sessionId);
 
             if (greeting.equals("name cannot be empty") || greeting.equals("name already taken")) {
                 Notification notification = new Notification(greeting, 4000);

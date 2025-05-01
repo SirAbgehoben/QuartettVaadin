@@ -18,5 +18,6 @@ vaadin-confirm-dialog-overlay[theme~="custom-confirm-dialog"] > [slot="header"] 
     color: hsla(214, 96%, 91%, 0.9);
 }
 vaadin-confirm-dialog-overlay::part(backdrop) {
+    transition: backdrop-filter 1.2s ease-in-out;
     backdrop-filter: blur(5px);
 }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.abgehoben.QuartettVaadin.QuartettSession.QuartettSessionIdCounter;
 
@@ -12,26 +13,30 @@ public class QuartettService {
     public QuartettService() {
     }
 
-    public static void startNewGame() {
+    public static void startNewGame(Map<VaadinSession, String> usersInQueue) {
         ArrayList<ArrayList<Integer>> decks = createCardsDeck();
         QuartettSession quartettSession = new QuartettSession(QuartettSessionIdCounter, decks);
 
-        LoginService.usersInQueue.forEach(quartettSession::addPlayer); //addPlayer(session, name) for each usersInQueue
+        usersInQueue.forEach(quartettSession::addPlayer); //addPlayer(session, name) for each usersInQueue
 
         quartettSession.InitializePlayers();
 
-        for (VaadinSession session : LoginService.usersInQueue.keySet()) {
+        for (VaadinSession session : usersInQueue.keySet()) {
             session.access(() -> {
                 UI ui = LoginService.getUIForSession(session);
-                if (ui != null && ui.isAttached()) {
-                    System.out.println("Navigating to quartett for session: " + session.getSession().getId() + " with UI: " + ui);
-                    ui.navigate(QuartettView.class);
-                } else {
+                if (ui == null) {
                     System.out.println("UI is null for session: " + session.getSession().getId());
+                    return;
                 }
+                if (QuartettView.sessionViewMap.containsKey(session)) {
+                    System.out.println("QuartettView already exists for session: " + session.getSession().getId());
+                    ui.getPage().reload();
+                    return;
+                }
+                System.out.println("Navigating to quartett for session: " + session.getSession().getId() + " with UI: " + ui);
+                ui.navigate(QuartettView.class);
             });
         }
-        LoginService.usersInQueue.clear();
     }
 
     public static void joinGame(VaadinSession session) {
@@ -39,7 +44,7 @@ public class QuartettService {
             UI ui = LoginService.getUIForSession(session);
             if (ui != null) {
                 System.out.println("Navigating to quartett for session: " + session.getSession().getId() + " with UI: " + ui);
-                ui.navigate("quartett");
+                ui.navigate(QuartettView.class);
             } else {
                 System.out.println("UI is null for session: " + session.getSession().getId());
             }
@@ -55,14 +60,6 @@ public class QuartettService {
 
         if (quartettSession.getPlayers().isEmpty()) {
             endGame(quartettSession);
-        } else if (quartettSession.getPlayers().containsKey(session)) {
-            quartettSession.removePlayer(session);
-            LoginService.usersInGame.remove(session);
-        }
-    }
-
-    public static void endGame(QuartettSession quartettSession) {
-        for (VaadinSession session : quartettSession.getPlayers().keySet()) {
             session.access(() -> {
                 UI ui = LoginService.getUIForSession(session);
                 if (ui != null && ui.isAttached()) {
@@ -72,7 +69,13 @@ public class QuartettService {
                     System.out.println("UI is null for session: " + session.getSession().getId());
                 }
             });
+        } else if (quartettSession.getPlayers().containsKey(session)) {
+            quartettSession.removePlayer(session);
+            LoginService.usersInGame.remove(session);
         }
+    }
+
+    public static void endGame(QuartettSession quartettSession) { //only call this after all players have left the game
         quartettSession.endSession();
         //noinspection ReassignedVariable,UnusedAssignment
         quartettSession = null;
